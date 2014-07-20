@@ -1,3 +1,10 @@
+require('nclosure').nclosure({additionalDeps:['deps.js']});
+expect = require('expect.js');
+
+goog.require('schedul.qt.Base');
+goog.require('schedul.qt.SmartTree');
+goog.require('schedul.qt.NodeStatus');
+
 describe('schedul.qt.SmartTree, general',function(){
   it('should build valid tree for [0,1,2,3]',function(){
        var tree = new schedul.qt.SmartTree();
