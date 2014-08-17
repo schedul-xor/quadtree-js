@@ -183,6 +183,19 @@ schedul.qt.Base.tileOutlineAtZoomLevel = function(path, zoomLevel,
   path.length = originalPathLength;
   resultVessel.push(maxTile.x);
   resultVessel.push(maxTile.y);
+
+  // Sort the order max < min into max > min
+  var t;
+  if(resultVessel[0] > resultVessel[2]){
+    t = resultVessel[2];
+    resultVessel[2] = resultVessel[0];
+    resultVessel[0] = t;
+  }
+  if(resultVessel[1] > resultVessel[3]){
+    t = resultVessel[3];
+    resultVessel[3] = resultVessel[1];
+    resultVessel[1] = t;
+  }
 };
 
 
