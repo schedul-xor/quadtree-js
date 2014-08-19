@@ -4,6 +4,7 @@ goog.require('goog.array');
 goog.require('goog.asserts');
 goog.require('goog.object');
 goog.require('javascript.SortedArray');
+goog.require('ol.TileCoord');
 goog.require('schedul.qt.Base');
 goog.require('schedul.qt.NodeLoadingStatus');
 goog.require('schedul.qt.NodeStatus');
@@ -62,7 +63,7 @@ schedul.qt.MapTree.prototype.registerMysteriousPath_ = function(path) {
  * @inheritDoc
  */
 schedul.qt.MapTree.prototype.overrideTileOutlineWithPath = function(requestedTile,foundPath, status, opt_notDirectlyRequestedButDiedTileCidsVessel) {
-    goog.asserts.assertArray(requestedTile);
+    goog.asserts.assertInstanceof(requestedTile,ol.TileCoord);
     goog.asserts.assertArray(foundPath);
 
   var i;
@@ -123,7 +124,7 @@ schedul.qt.MapTree.prototype.overrideTileOutlineWithPath = function(requestedTil
 /**
  * @param{!Array.<!number>} searchingPath
  * @param {!number} zoomLevel
- * @return {!Array.<!Array.<!number>>}
+ * @return {!Array.<!ol.TileCoord>}
  */
 schedul.qt.MapTree.prototype.
 allOverriddenTilesForPathAndZoomLevel = function(searchingPath, zoomLevel){
@@ -180,7 +181,7 @@ allOverriddenTilesForPathAndZoomLevel = function(searchingPath, zoomLevel){
             iterPath.length = zoomLevel;
         }
         var tile = schedul.qt.Base.tileForPath(iterPath);
-        var tileHash = tile.join(',');
+        var tileHash = tile.hash();
         uniqueTiles[tileHash] = tile;
     }
     //console.log('e search path', searchingPath);

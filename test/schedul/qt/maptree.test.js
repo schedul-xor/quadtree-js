@@ -62,24 +62,24 @@ describe('schedul.qt.MapTree, general',function(){
       var overriddenTilesLowerMismatch = tree.allOverriddenTilesForPathAndZoomLevel([0,1,2,1,2,1],4);
 
       expect(overriddenTilesExactMatch.length).to.be(1);
-      expect(overriddenTilesExactMatch[0][1]).to.be(5);
-      expect(overriddenTilesExactMatch[0][2]).to.be(-4);
-      expect(overriddenTilesExactMatch[0][0]).to.be(3);
+      expect(overriddenTilesExactMatch[0].x).to.be(5);
+      expect(overriddenTilesExactMatch[0].y).to.be(-4);
+      expect(overriddenTilesExactMatch[0].z).to.be(3);
       expect(overriddenTilesExactMismatch.length).to.be(0);
       expect(overriddenTilesUpper1Match.length).to.be(1);
-      expect(overriddenTilesUpper1Match[0][1]).to.be(5);
-      expect(overriddenTilesUpper1Match[0][2]).to.be(-4);
-      expect(overriddenTilesUpper1Match[0][0]).to.be(3);
+      expect(overriddenTilesUpper1Match[0].x).to.be(5);
+      expect(overriddenTilesUpper1Match[0].y).to.be(-4);
+      expect(overriddenTilesUpper1Match[0].z).to.be(3);
       expect(overriddenTilesUpper1Mismatch.length).to.be(0);
       expect(overriddenTilesUpper2Match.length).to.be(1);
-      expect(overriddenTilesUpper2Match[0][1]).to.be(5);
-      expect(overriddenTilesUpper2Match[0][2]).to.be(-4);
-      expect(overriddenTilesUpper2Match[0][0]).to.be(3);
+      expect(overriddenTilesUpper2Match[0].x).to.be(5);
+      expect(overriddenTilesUpper2Match[0].y).to.be(-4);
+      expect(overriddenTilesUpper2Match[0].z).to.be(3);
       expect(overriddenTilesUpper2Mismatch.length).to.be(0);
       expect(overriddenTilesLowerMatch.length).to.be(1);
-      expect(overriddenTilesLowerMatch[0][1]).to.be(5);
-      expect(overriddenTilesLowerMatch[0][2]).to.be(-4);
-      expect(overriddenTilesLowerMatch[0][0]).to.be(3);
+      expect(overriddenTilesLowerMatch[0].x).to.be(5);
+      expect(overriddenTilesLowerMatch[0].y).to.be(-4);
+      expect(overriddenTilesLowerMatch[0].z).to.be(3);
       expect(overriddenTilesLowerMismatch.length).to.be(0);
   });
 

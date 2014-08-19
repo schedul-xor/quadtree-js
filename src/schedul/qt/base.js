@@ -1,6 +1,8 @@
 goog.provide('schedul.qt.Base');
 
+goog.require('goog.asserts');
 goog.require('goog.events.EventTarget');
+goog.require('ol.TileCoord');
 goog.require('schedul.qt.NodeStatus');
 
 
@@ -18,10 +20,10 @@ goog.inherits(schedul.qt.Base, goog.events.EventTarget);
 
 
 /**
- * @param {!Array.<!number>} tile
+ * @param {!ol.TileCoord} tile
  */
 schedul.qt.Base.prototype.registerTileOutlineWithTile = function(tile){
-  goog.asserts.assertArray(tile);
+  goog.asserts.assertInstanceof(tile,ol.TileCoord);
 
   schedul.qt.Base.pathForTile(tile, this.pathVessel_);
   this.registerTileOutlineWithPath(this.pathVessel_);
@@ -35,14 +37,14 @@ schedul.qt.Base.prototype.registerTileOutlineWithPath = goog.abstractMethod;
 
 
 /**
- * @param {!Array.<!number>} requestedTile
- * @param {!Array.<!number>} foundTile
+ * @param {!ol.TileCoord} requestedTile
+ * @param {!ol.TileCoord} foundTile
  * @param {!schedul.qt.NodeStatus} status
  * @param {!Array.<!string>=} opt_notDirectlyRequestedButDiedTilesVessel
  */
 schedul.qt.Base.prototype.overrideTileOutlineWithTile = function(requestedTile,foundTile,status,opt_notDirectlyRequestedButDiedTilesVessel){
-  goog.asserts.assertArray(requestedTile);
-  goog.asserts.assertArray(foundTile);
+  goog.asserts.assertInstanceof(requestedTile,ol.TileCoord);
+  goog.asserts.assertInstanceof(foundTile,ol.TileCoord);
 
   schedul.qt.Base.pathForTile(foundTile,this.pathVessel_);
   this.overrideTileOutlineWithPath(requestedTile,this.pathVessel_,status,opt_notDirectlyRequestedButDiedTilesVessel);
@@ -50,7 +52,7 @@ schedul.qt.Base.prototype.overrideTileOutlineWithTile = function(requestedTile,f
 
 
 /**
- * @param {!Array.<!number>} requestedTile
+ * @param {!ol.TileCoord} requestedTile
  * @param {!Array.<!number>} foundPath
  * @param {!schedul.qt.NodeStatus} status
  * @param {!Array.<!string>=} opt_notDirectlyRequestedButDiedTileCidsVessel
@@ -67,11 +69,11 @@ schedul.qt.Base.prototype.mostDensePathForPath = goog.abstractMethod;
 
 
 /**
- * @param {!Array.<!number>} searchingTile
+ * @param {!ol.TileCoord} searchingTile
  * @return {!Array.<!number>} Found path.
  */
 schedul.qt.Base.prototype.mostDensePathForTile = function(searchingTile){
-  goog.asserts.assertArray(searchingTile);
+  goog.asserts.assertInstanceof(searchingTile,ol.TileCoord);
 
   schedul.qt.Base.pathForTile(searchingTile, this.pathVessel_);
   return this.mostDensePathForPath(this.pathVessel_);
@@ -79,11 +81,11 @@ schedul.qt.Base.prototype.mostDensePathForTile = function(searchingTile){
 
 
 /**
- * @param {!Array.<!number>} searchingTile
- * @return {!Array.<!number>} Found tile.
+ * @param {!ol.TileCoord} searchingTile
+ * @return {!ol.TileCoord} Found tile.
  */
 schedul.qt.Base.prototype.mostDenseTileForTile = function(searchingTile){
-  goog.asserts.assertArray(searchingTile);
+  goog.asserts.assertInstanceof(searchingTile,ol.TileCoord);
 
   var mostDensePath = this.mostDensePathForTile(searchingTile);
   return schedul.qt.Base.tileForPath(mostDensePath);
@@ -93,9 +95,11 @@ schedul.qt.Base.prototype.mostDenseTileForTile = function(searchingTile){
 /**
  * @param {!Array.<!number>} path
  * @param {!number=} opt_limitZ
- * @return {!Array.<!number>}
+ * @return {!ol.TileCoord}
  */
 schedul.qt.Base.tileForPath = function(path, opt_limitZ) {
+  goog.asserts.assertArray(path);
+
   var x = 0;
   var y = 0;
   var z = goog.isDefAndNotNull(opt_limitZ) ? opt_limitZ : (path.length - 1);
@@ -112,7 +116,7 @@ schedul.qt.Base.tileForPath = function(path, opt_limitZ) {
     }
   }
   y = -y - 1;
-  return [z,x,y];
+  return new ol.TileCoord(z,x,y);
 };
 
 
@@ -120,15 +124,15 @@ schedul.qt.Base.tileForPath = function(path, opt_limitZ) {
  * x range is from  0 to -2^n-1
  * y range is from  -1 to -2^n
  *
- * @param {!Array.<!number>} tile
+ * @param {!ol.TileCoord} tile
  * @param {!Array.<!number>} output
  * @param {!Array.<!number>=} opt_coordCache
  */
 schedul.qt.Base.pathForTile = function(tile, output, opt_coordCache) {
-    goog.asserts.assertArray(tile);
+    goog.asserts.assertInstanceof(tile,ol.TileCoord);
     goog.asserts.assertArray(output);
 
-  var tilez = tile[0];
+  var tilez = tile.z;
 
   var i, j;
   if (!goog.isDefAndNotNull(opt_coordCache)) {
@@ -138,8 +142,8 @@ schedul.qt.Base.pathForTile = function(tile, output, opt_coordCache) {
     opt_coordCache.push([]);
   }
   var k = 1 << tilez;
-  var xt = tile[1];
-  var yt = -tile[2] - 1;
+  var xt = tile.x;
+  var yt = -tile.y - 1;
   for (i = 0; i <= tilez; i++) {
     opt_coordCache[i][0] = (xt & k);
     opt_coordCache[i][1] = (yt & k);
@@ -203,8 +207,8 @@ schedul.qt.Base.tileOutlineAtZoomLevel = function(path, zoomLevel,
   }
   var minTile = schedul.qt.Base.tileForPath(path, zoomLevel);
   path.length = originalPathLength;
-  var minTileX = minTile[1];
-  var minTileY = minTile[2];
+  var minTileX = minTile.x;
+  var minTileY = minTile.y;
   resultVessel[0] = minTileX;
   resultVessel[2] = minTileY;
 
@@ -213,8 +217,8 @@ schedul.qt.Base.tileOutlineAtZoomLevel = function(path, zoomLevel,
   }
   var maxTile = schedul.qt.Base.tileForPath(path, zoomLevel);
   path.length = originalPathLength;
-  var maxTileX = maxTile[1];
-  var maxTileY = maxTile[2];
+  var maxTileX = maxTile.x;
+  var maxTileY = maxTile.y;
   resultVessel[1] = maxTileX;
   resultVessel[3] = maxTileY;
 

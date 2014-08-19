@@ -3,6 +3,7 @@ goog.require('goog.json.Serializer');
 goog.require('goog.ui.Button');
 goog.require('goog.ui.LabelInput');
 goog.require('goog.ui.Textarea');
+goog.require('ol.TileCoord');
 goog.require('schedul.qt.Base');
 goog.require('schedul.qt.MapTree');
 goog.require('schedul.qt.NodeStatus');
@@ -27,7 +28,7 @@ goog.events.listen(insertButton,goog.ui.Component.EventType.ACTION, function(e) 
   var x = Number(a[0]);
   var y = Number(a[1]);
   var z = Number(a[2]);
-  var tc = [z,x,y];
+  var tc = new ol.TileCoord(z,x,y);
 
   qt.registerTileOutlineWithTile(tc);
   qt.overrideTileOutlineWithTile(tc,tc,schedul.qt.NodeStatus.IS_SURELY_LEAF);
