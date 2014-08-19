@@ -1,7 +1,6 @@
 require('nclosure').nclosure({additionalDeps:['deps.js']});
 expect = require('expect.js');
 
-goog.require('ol.TileCoord');
 goog.require('schedul.qt.Base');
 
 describe('schedul.qt.Base, general',function(){
@@ -11,14 +10,15 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(0,0,-1),path,coordCache);
+    var tile = [0,0,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(0);
      });
   it('should return tile (0,-1,0) for path [0]',function(){
     var tile = schedul.qt.Base.tileForPath([0]);
-    expect(tile.x).to.be(0);
-    expect(tile.y).to.be(-1);
-    expect(tile.z).to.be(0);
+    expect(tile[1]).to.be(0);
+    expect(tile[2]).to.be(-1);
+    expect(tile[0]).to.be(0);
      });
 
   // [1] <=> (1,-1,0)
@@ -26,14 +26,15 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(0,1,-1),path,coordCache);
+    var tile = [0,1,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(1);
   });
   it('should return tile (1,-1,0) for path [1]',function(){
        var tile = schedul.qt.Base.tileForPath([1]);
-    expect(tile.x).to.be(1);
-    expect(tile.y).to.be(-1);
-    expect(tile.z).to.be(0);
+    expect(tile[1]).to.be(1);
+    expect(tile[2]).to.be(-1);
+    expect(tile[0]).to.be(0);
      });
 
   // [2] <=> (0,-2,0)
@@ -41,14 +42,15 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(0,0,-2),path,coordCache);
+    var tile = [0,0,-2];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(2);
   });
   it('should return tile (0,-2,0) for path [2]',function(){
        var tile = schedul.qt.Base.tileForPath([2]);
-    expect(tile.x).to.be(0);
-    expect(tile.y).to.be(-2);
-    expect(tile.z).to.be(0);
+    expect(tile[1]).to.be(0);
+    expect(tile[2]).to.be(-2);
+    expect(tile[0]).to.be(0);
      });
 
   // [3] <=> (1,-2,0)
@@ -56,14 +58,15 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(0,1,-2),path,coordCache);
+    var tile = [0,1,-2];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(3);
   });
   it('should return tile (1,-2,0) for path [3]',function(){
        var tile = schedul.qt.Base.tileForPath([3]);
-    expect(tile.x).to.be(1);
-    expect(tile.y).to.be(-2);
-    expect(tile.z).to.be(0);
+    expect(tile[1]).to.be(1);
+    expect(tile[2]).to.be(-2);
+    expect(tile[0]).to.be(0);
   });
 
   // [0,0] <=> (0,-1,1)
@@ -71,15 +74,16 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,0,-1),path,coordCache);
+    var tile = [1,0,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(0);
     expect(path[1]).to.be(0);
   });
   it('should return tile (0,-1,1) for path [0,0]',function(){
        var tile = schedul.qt.Base.tileForPath([0,0]);
-    expect(tile.x).to.be(0);
-    expect(tile.y).to.be(-1);
-    expect(tile.z).to.be(1);
+    expect(tile[1]).to.be(0);
+    expect(tile[2]).to.be(-1);
+    expect(tile[0]).to.be(1);
      });
 
   // [0,1] <=> (1,-1,1)
@@ -87,7 +91,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,1,-1),path,coordCache);
+    var tile = [1,1,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(0);
     expect(path[1]).to.be(1);
      });
@@ -97,7 +102,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,2,-1),path,coordCache);
+    var tile = [1,2,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(1);
     expect(path[1]).to.be(0);
      });
@@ -107,7 +113,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,3,-1),path,coordCache);
+    var tile = [1,3,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(1);
     expect(path[1]).to.be(1);
      });
@@ -117,7 +124,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,3,-2),path,coordCache);
+    var tile = [1,3,-2];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(1);
     expect(path[1]).to.be(3);
      });
@@ -127,7 +135,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,3,-3),path,coordCache);
+    var tile = [1,3,-3];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(3);
     expect(path[1]).to.be(1);
   });
@@ -137,7 +146,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,3,-4),path,coordCache);
+    var tile = [1,3,-4];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(3);
     expect(path[1]).to.be(3);
      });
@@ -147,7 +157,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,2,-4),path,coordCache);
+    var tile = [1,2,-4];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(3);
     expect(path[1]).to.be(2);
      });
@@ -157,7 +168,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,1,-4),path,coordCache);
+    var tile = [1,1,-4];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(2);
     expect(path[1]).to.be(3);
      });
@@ -167,7 +179,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,0,-4),path,coordCache);
+    var tile = [1,0,-4];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(2);
     expect(path[1]).to.be(2);
      });
@@ -177,7 +190,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,0,-3),path,coordCache);
+    var tile = [1,0,-3];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(2);
     expect(path[1]).to.be(0);
      });
@@ -187,7 +201,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(1,0,-2),path,coordCache);
+    var tile = [1,0,-2];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(0);
     expect(path[1]).to.be(2);
   });
@@ -197,16 +212,17 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(2,0,-1),path,coordCache);
+    var tile = [2,0,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(0);
     expect(path[1]).to.be(0);
     expect(path[2]).to.be(0);
      });
   it('should return tile (0,-1,2) for path [0,0,0]',function(){
        var tile = schedul.qt.Base.tileForPath([0,0,0]);
-    expect(tile.x).to.be(0);
-    expect(tile.y).to.be(-1);
-    expect(tile.z).to.be(2);
+    expect(tile[1]).to.be(0);
+    expect(tile[2]).to.be(-1);
+    expect(tile[0]).to.be(2);
      });
 
   // [3,3,3] <=> (7,-8,2)
@@ -214,16 +230,17 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(2,7,-8),path,coordCache);
+    var tile = [2,7,-8];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(3);
     expect(path[1]).to.be(3);
     expect(path[2]).to.be(3);
   });
   it('should return tile (7,-8,2) for path [3,3,3]',function(){
     var tile = schedul.qt.Base.tileForPath([3,3,3]);
-    expect(tile.x).to.be(7);
-    expect(tile.y).to.be(-8);
-    expect(tile.z).to.be(2);
+    expect(tile[1]).to.be(7);
+    expect(tile[2]).to.be(-8);
+    expect(tile[0]).to.be(2);
   });
 
   // [0,0,0,0] <=> (0,-1,3)
@@ -231,7 +248,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[],[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(3,0,-1),path,coordCache);
+    var tile = [3,0,-1];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(0);
     expect(path[1]).to.be(0);
     expect(path[2]).to.be(0);
@@ -243,7 +261,8 @@ describe('schedul.qt.Base, general',function(){
     var path = [];
     var coordCache = [[],[],[],[]];
       // z,x,y
-    schedul.qt.Base.pathForTile(new ol.TileCoord(3,15,-16),path,coordCache);
+    var tile = [3,15,-16];
+    schedul.qt.Base.pathForTile(tile,path,coordCache);
     expect(path[0]).to.be(3);
     expect(path[1]).to.be(3);
     expect(path[2]).to.be(3);
@@ -256,8 +275,8 @@ describe('schedul.qt.Base, general',function(){
        schedul.qt.Base.tileOutlineAtZoomLevel(path,0,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
-    expect(tileOutline[1]).to.be(-1);
-    expect(tileOutline[2]).to.be(0);
+    expect(tileOutline[1]).to.be(0);
+    expect(tileOutline[2]).to.be(-1);
     expect(tileOutline[3]).to.be(-1);
   });
   it('should return tileOutline [1](1,-1,0)->[2](1,-1,0)={1,-1,1,-1} for path [1] and zoom level 0',function(){
@@ -266,8 +285,8 @@ describe('schedul.qt.Base, general',function(){
     schedul.qt.Base.tileOutlineAtZoomLevel(path,0,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(1);
-    expect(tileOutline[1]).to.be(-1);
-    expect(tileOutline[2]).to.be(1);
+    expect(tileOutline[1]).to.be(1);
+    expect(tileOutline[2]).to.be(-1);
     expect(tileOutline[3]).to.be(-1);
   });
   it('should return tileOutline [2](0,-2,0)->[2](0,-2,0)={0,-2,0,-2} for path [2] and zoom level 0',function(){
@@ -276,8 +295,8 @@ describe('schedul.qt.Base, general',function(){
     schedul.qt.Base.tileOutlineAtZoomLevel(path,0,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
-    expect(tileOutline[1]).to.be(-2);
-    expect(tileOutline[2]).to.be(0);
+    expect(tileOutline[1]).to.be(0);
+    expect(tileOutline[2]).to.be(-2);
     expect(tileOutline[3]).to.be(-2);
   });
   it('should return tileOutline [0,0](0,-1,1)->[0,3](1,-2,1)={0,-1,1,-2} for path [0] and zoom level 1',function(){
@@ -286,9 +305,9 @@ describe('schedul.qt.Base, general',function(){
     schedul.qt.Base.tileOutlineAtZoomLevel(path,1,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
-    expect(tileOutline[1]).to.be(-1);
-    expect(tileOutline[2]).to.be(1);
-    expect(tileOutline[3]).to.be(-2);
+    expect(tileOutline[1]).to.be(1);
+    expect(tileOutline[2]).to.be(-2);
+    expect(tileOutline[3]).to.be(-1);
   });
   it('should return tileOutline [1,0](2,-1,1)->[1,3](3,-2,1)={2,-1,3,-2} for path [1] and zoom level 1',function(){
     var tileOutline = [];
@@ -296,9 +315,9 @@ describe('schedul.qt.Base, general',function(){
     schedul.qt.Base.tileOutlineAtZoomLevel(path,1,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(2);
-    expect(tileOutline[1]).to.be(-1);
-    expect(tileOutline[2]).to.be(3);
-    expect(tileOutline[3]).to.be(-2);
+    expect(tileOutline[1]).to.be(3);
+    expect(tileOutline[2]).to.be(-2);
+    expect(tileOutline[3]).to.be(-1);
   });
   it('should return tileOutline [1,0,0](4,-1,2)->[1,3,3](7,-4,2)={4,-1,7,-4} for path [1] and zoom level 2',function(){
     var tileOutline = [];
@@ -306,9 +325,9 @@ describe('schedul.qt.Base, general',function(){
     schedul.qt.Base.tileOutlineAtZoomLevel(path,2,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(4);
-    expect(tileOutline[1]).to.be(-1);
-    expect(tileOutline[2]).to.be(7);
-    expect(tileOutline[3]).to.be(-4);
+    expect(tileOutline[1]).to.be(7);
+    expect(tileOutline[2]).to.be(-4);
+    expect(tileOutline[3]).to.be(-1);
   });
   it('should return tileOutline [0,0,0](0,-1,2)->[0,3,3](3,-4,2)={0-1,3,-4} for path [0] and zoom level 2',function(){
     var tileOutline = [];
@@ -316,9 +335,9 @@ describe('schedul.qt.Base, general',function(){
     schedul.qt.Base.tileOutlineAtZoomLevel(path,2,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
-    expect(tileOutline[1]).to.be(-1);
-    expect(tileOutline[2]).to.be(3);
-    expect(tileOutline[3]).to.be(-4);
+    expect(tileOutline[1]).to.be(3);
+    expect(tileOutline[2]).to.be(-4);
+    expect(tileOutline[3]).to.be(-1);
   });
   it('should return 0 for q2i(0,0)',function(){
     expect(schedul.qt.Base.q2i(0,0)).to.be(0);

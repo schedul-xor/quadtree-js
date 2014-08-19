@@ -5,7 +5,6 @@ goog.require('schedul.qt.Base');
 goog.require('schedul.qt.NodeLoadingStatus');
 goog.require('schedul.qt.NodeStatus');
 goog.require('schedul.qt.SmartTreeNode');
-goog.require('ol.TileCoord');
 
 
 
@@ -28,7 +27,7 @@ goog.inherits(schedul.qt.SmartTree, schedul.qt.Base);
 /**
  * Request tile outline status.
  *
- * @param {!ol.TileCoord} tile
+ * @param {!Array.<!number>} tile
  * @param {!Array.<!number>=} opt_path
  * @return {!Array.<!number>}
  */
@@ -53,7 +52,7 @@ schedul.qt.SmartTree.prototype.registerTileOutlineWithPath = function(tile,
 
 
 /**
- * @param {!ol.TileCoord} tile
+ * @param {!Array.<!number>} tile
  * @return {?Array.<!number>}
  */
 schedul.qt.SmartTree.prototype.pathForTile = function(tile) {
@@ -66,7 +65,7 @@ schedul.qt.SmartTree.prototype.pathForTile = function(tile) {
 
 
 /**
- * @param {!ol.TileCoord} tile
+ * @param {!Array.<!number>} tile
  * @param {!Array.<!number>} foundPath
  * @param {!schedul.qt.NodeStatus} status
  */
@@ -87,7 +86,7 @@ schedul.qt.SmartTree.prototype.
 /**
  * @param {!Array.<!number>} path
  * @param {!number} zoomLevel
- * @return {!Array.<!ol.TileCoord>}
+ * @return {!Array.<!Array..<!number>>}
  */
 schedul.qt.SmartTree.prototype.
     allOverriddenTilesForPathAndZoomLevel = function(path, zoomLevel) {
@@ -107,7 +106,7 @@ schedul.qt.SmartTree.prototype.
  * @param {!schedul.qt.SmartTreeNode} targetNode
  * @param {!Array.<!number>} searchingPath
  * @param {!Array.<!number>} currentPathStack
- * @param {!Array.<!ol.TileCoord>} foundTilesVessel
+ * @param {!Array.<!Array.<!number>>} foundTilesVessel
  */
 schedul.qt.SmartTree.prototype.
     addAllOverriddenTilesInNodeForPartialPathAndLeftZoomLevel_ = function(targetNode, searchingPath, currentPathStack, foundTilesVessel) {
@@ -159,7 +158,7 @@ schedul.qt.SmartTree.prototype.
  * @param {!schedul.qt.SmartTreeNode} targetNode
  * @param {!number} alreadyConsumedPathLength
  * @param {!Array.<!number>} currentPathStack
- * @param {!Array.<!ol.TileCoord>} foundTilesVessel
+ * @param {!Array.<!Array.<!number>>} foundTilesVessel
  */
 schedul.qt.SmartTree.prototype.addAllTilesUnderNode_ = function(targetNode,
     alreadyConsumedPathLength, currentPathStack, foundTilesVessel) {
