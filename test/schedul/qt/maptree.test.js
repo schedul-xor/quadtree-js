@@ -376,4 +376,67 @@ describe('schedul.qt.MapTree, general',function(){
       var overriddenTilesExactMatch012 = tree.allOverriddenTilesForPathAndZoomLevel([0,1,2],3);
       expect(overriddenTilesExactMatch012.length).to.be(1);
   });
+
+  it('should properly cut off leaves when all children are overridden when cuttingOffLeaves mode is ON',function(){
+    var tree = new schedul.qt.MapTree(true);
+
+    var tile1 = schedul.qt.Base.tileForPath([0,1,2,0]);
+    tree.registerTileOutlineWithTile(tile1);
+    var tile2 = schedul.qt.Base.tileForPath([0,1,2,1]);
+    tree.registerTileOutlineWithTile(tile2);
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2,2]);
+    tree.registerTileOutlineWithTile(tile3);
+    var tile4 = schedul.qt.Base.tileForPath([0,1,2,3]);
+    tree.registerTileOutlineWithTile(tile4);
+      tree.overrideTileOutlineWithPath(tile1,[0,1,2,0],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile2,[0,1,2,1],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile3,[0,1,2,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile4,[0,1,2,3],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    // Since [0,1,2,0],[0,1,2,1],[0,1,2,2],[0,1,2,3] are all done, it is sure that [0,1,2] is done.
+    expect(tree.paths_.array_[0]).to.be('0');
+    expect(tree.paths_.array_[1]).to.be('01');
+    expect(tree.paths_.array_[2]).to.be('012');
+    expect(tree.paths_.array_.length).to.be(3); // [0,01,012].length = 3
+
+    expect(tree.path2status_['0']).to.be(schedul.qt.NodeStatus.IS_MYSTERIOUS);
+    expect(tree.path2status_['01']).to.be(schedul.qt.NodeStatus.IS_MYSTERIOUS);
+    expect(tree.path2status_['012']).to.be(schedul.qt.NodeStatus.IS_SURELY_LEAF);
+  });
+
+
+  it('should properly cut off leaves recursively when all children are overridden when cuttingOffLeaves mode is ON',function(){
+    var tree = new schedul.qt.MapTree(true);
+
+    var tile1 = schedul.qt.Base.tileForPath([0,1,2,0]);
+    tree.registerTileOutlineWithTile(tile1);
+    var tile2 = schedul.qt.Base.tileForPath([0,1,2,1]);
+    tree.registerTileOutlineWithTile(tile2);
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2,2]);
+    tree.registerTileOutlineWithTile(tile3);
+    var tile4 = schedul.qt.Base.tileForPath([0,1,2,3]);
+    tree.registerTileOutlineWithTile(tile4);
+    var tile5 = schedul.qt.Base.tileForPath([0,1,0]);
+    tree.registerTileOutlineWithTile(tile5);
+    var tile6 = schedul.qt.Base.tileForPath([0,1,1]);
+    tree.registerTileOutlineWithTile(tile6);
+    var tile7 = schedul.qt.Base.tileForPath([0,1,3]);
+    tree.registerTileOutlineWithTile(tile7);
+      tree.overrideTileOutlineWithPath(tile5,[0,1,0],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile6,[0,1,1],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile7,[0,1,3],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile1,[0,1,2,0],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile2,[0,1,2,1],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile3,[0,1,2,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile4,[0,1,2,3],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    // Since [0,1,2,0],[0,1,2,1],[0,1,2,2],[0,1,2,3] are all done, it is sure that [0,1,2] is done.
+    // Since [0,1,0],[0,1,1],[0,1,2],[0,1,3] are also all done, it is sure that [0,1] is done.
+    expect(tree.paths_.array_[0]).to.be('0');
+    expect(tree.paths_.array_[1]).to.be('01');
+    expect(tree.paths_.array_.length).to.be(2); // [0,01].length = 2
+
+    expect(tree.path2status_['0']).to.be(schedul.qt.NodeStatus.IS_MYSTERIOUS);
+    expect(tree.path2status_['01']).to.be(schedul.qt.NodeStatus.IS_SURELY_LEAF);
+  });
 });

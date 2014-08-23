@@ -314,7 +314,6 @@ describe('schedul.qt.Base, general',function(){
     var tileOutline = [];
     var path = [1];
     schedul.qt.Base.tileOutlineAtZoomLevel(path,1,tileOutline);
-    console.log(tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(2);
     expect(tileOutline[1]).to.be(3);
