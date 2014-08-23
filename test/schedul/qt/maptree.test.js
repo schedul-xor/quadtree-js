@@ -579,4 +579,34 @@ describe('schedul.qt.MapTree, general',function(){
     expect(notLoadedTile5.y).to.be(shouldBeFoundTile5.y);
     expect(notLoadedTile5.z).to.be(shouldBeFoundTile5.z);
   });
+
+  it('should return not prepared reanges for tree inside already loaded tile',function(){
+    var tree = new schedul.qt.MapTree();
+
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2,3]);
+    tree.registerTileOutlineWithTile(tile3);
+    tree.overrideTileOutlineWithPath(tile3,[0,1,2,3],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    // Query tile is inside tile3. It is already loaded!
+    var queryTile = schedul.qt.Base.tileForPath([0,1,2,3,1,1,1,1]);
+    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    expect(notLoadedRanges.length).to.be(0);
+  });
+
+  it('should return not prepared reanges for tree inside not already loaded tile',function(){
+    var tree = new schedul.qt.MapTree();
+
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2,3]);
+    tree.registerTileOutlineWithTile(tile3);
+    tree.overrideTileOutlineWithPath(tile3,[0,1,2,3],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    // Query tile is inside tile3. It is already loaded!
+    var queryTile = schedul.qt.Base.tileForPath([0,2,2,3,1,1,1,1]);
+    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    expect(notLoadedRanges.length).to.be(1);
+    var notLoadedTile0 = notLoadedRanges[0];
+    expect(notLoadedTile0.x).to.be(queryTile.x);
+    expect(notLoadedTile0.y).to.be(queryTile.y);
+    expect(notLoadedTile0.z).to.be(queryTile.z);
+  });
 });

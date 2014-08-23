@@ -243,10 +243,21 @@ schedul.qt.MapTree.prototype.mostDensePathForPath = function(searchingPath,opt_m
 schedul.qt.MapTree.prototype.findNotLoadedRangesInside = function(tile,opt_vessel){
   goog.asserts.assertInstanceof(tile,ol.TileCoord);
   var vessel = goog.isDefAndNotNull(opt_vessel)?opt_vessel:[];
+  vessel.length = 0;
 
   var path = [];
   schedul.qt.Base.pathForTile(tile,path);
-  this.findNotLoadedRangesInsidePath_(path,vessel);
+
+  var isChildOfAlreadyLoadedTile = false;
+  var mostDensePath = this.mostDensePathForPath(path);
+  var mostDensePathTxt = mostDensePath.join('');
+  if(goog.object.containsKey(this.path2status_,mostDensePathTxt) && this.path2status_[mostDensePathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF){
+    isChildOfAlreadyLoadedTile = true;
+  }
+
+  if(!isChildOfAlreadyLoadedTile){
+    this.findNotLoadedRangesInsidePath_(path,vessel);
+  }
 
   return vessel;
 };
