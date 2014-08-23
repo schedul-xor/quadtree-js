@@ -5,6 +5,7 @@ goog.require('goog.asserts');
 goog.require('goog.object');
 goog.require('javascript.SortedArray');
 goog.require('ol.TileCoord');
+goog.require('ol.TileRange');
 goog.require('schedul.qt.Base');
 goog.require('schedul.qt.NodeLoadingStatus');
 goog.require('schedul.qt.NodeStatus');
@@ -231,6 +232,55 @@ schedul.qt.MapTree.prototype.mostDensePathForPath = function(searchingPath,opt_m
     mostDensePath.push(searchingPath[i]);
   }
   return mostDensePath;
+};
+
+
+/**
+ * @param {!ol.TileCoord} tile
+ * @param {Array.<!ol.TileCoord>=} opt_vessel
+ * @return {!Array.<!ol.TileCoord>}
+ */
+schedul.qt.MapTree.prototype.findNotLoadedRangesInside = function(tile,opt_vessel){
+  goog.asserts.assertInstanceof(tile,ol.TileCoord);
+  var vessel = goog.isDefAndNotNull(opt_vessel)?opt_vessel:[];
+
+  var path = [];
+  schedul.qt.Base.pathForTile(tile,path);
+  this.findNotLoadedRangesInsidePath_(path,vessel);
+
+  return vessel;
+};
+
+
+/**
+ * @private
+ * @param {!Array.<!number>} path
+ * @param {!Array.<!ol.TileCoord>} vessel
+ */
+schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath_ = function(path,vessel){
+  goog.asserts.assertArray(path);
+  goog.asserts.assertArray(vessel);
+
+  var pathTxt = path.join('');
+
+  // This path seems doesn't seem to exist! Whole inside me is what's not found.
+  if(!goog.object.containsKey(this.path2status_,pathTxt)){
+    var itsMeThatDoesntExistTile = schedul.qt.Base.tileForPath(path);
+    vessel.push(itsMeThatDoesntExistTile);
+    return;
+  }
+
+  // I' m surely existing, and is leaf. Nothing found under me.
+  if(this.path2status_[pathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF){
+    return;
+  }
+
+  var hasNoChildren = true;
+  for(var i = 0;i < 4;i++){
+    path.push(i);
+    this.findNotLoadedRangesInsidePath_(path,vessel);
+    path.pop();
+  }
 };
 
 

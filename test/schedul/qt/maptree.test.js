@@ -439,4 +439,144 @@ describe('schedul.qt.MapTree, general',function(){
     expect(tree.path2status_['0']).to.be(schedul.qt.NodeStatus.IS_MYSTERIOUS);
     expect(tree.path2status_['01']).to.be(schedul.qt.NodeStatus.IS_SURELY_LEAF);
   });
+
+  it('should return not-prepared ranges for empty tree',function(){
+    var tree = new schedul.qt.MapTree();
+
+    var queryTile = schedul.qt.Base.tileForPath([0,1]);
+    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    expect(notLoadedRanges.length).to.be(1);
+    var notLoadedFirstTile = notLoadedRanges[0];
+    expect(notLoadedFirstTile.x).to.be(queryTile.x);
+    expect(notLoadedFirstTile.y).to.be(queryTile.y);
+    expect(notLoadedFirstTile.z).to.be(queryTile.z);
+  });
+
+  it('should return not-prepared ranges for tree for single level with one hole',function(){
+    var tree = new schedul.qt.MapTree();
+
+    var tile1 = schedul.qt.Base.tileForPath([0,1,0]);
+    tree.registerTileOutlineWithTile(tile1);
+    var tile2 = schedul.qt.Base.tileForPath([0,1,1]);
+    tree.registerTileOutlineWithTile(tile2);
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2]);
+    tree.registerTileOutlineWithTile(tile3);
+      tree.overrideTileOutlineWithPath(tile1,[0,1,0],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile2,[0,1,1],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile3,[0,1,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    var queryTile = schedul.qt.Base.tileForPath([0,1]);
+    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    expect(notLoadedRanges.length).to.be(1);
+    var shouldBeFoundTile = schedul.qt.Base.tileForPath([0,1,3]);
+    var notLoadedFirstTile = notLoadedRanges[0];
+    expect(notLoadedFirstTile.x).to.be(shouldBeFoundTile.x);
+    expect(notLoadedFirstTile.y).to.be(shouldBeFoundTile.y);
+    expect(notLoadedFirstTile.z).to.be(shouldBeFoundTile.z);
+  });
+
+  it('should return not-prepared ranges for tree for single level with two holes',function(){
+    var tree = new schedul.qt.MapTree();
+
+    var tile1 = schedul.qt.Base.tileForPath([0,1,0]);
+    tree.registerTileOutlineWithTile(tile1);
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2]);
+    tree.registerTileOutlineWithTile(tile3);
+      tree.overrideTileOutlineWithPath(tile1,[0,1,0],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+      tree.overrideTileOutlineWithPath(tile3,[0,1,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    var queryTile = schedul.qt.Base.tileForPath([0,1]);
+    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    expect(notLoadedRanges.length).to.be(2);
+    var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0,1,1]);
+    var notLoadedTile0 = notLoadedRanges[0];
+    expect(notLoadedTile0.x).to.be(shouldBeFoundTile0.x);
+    expect(notLoadedTile0.y).to.be(shouldBeFoundTile0.y);
+    expect(notLoadedTile0.z).to.be(shouldBeFoundTile0.z);
+
+    var shouldBeFoundTile1 = schedul.qt.Base.tileForPath([0,1,3]);
+    var notLoadedTile1 = notLoadedRanges[1];
+    expect(notLoadedTile1.x).to.be(shouldBeFoundTile1.x);
+    expect(notLoadedTile1.y).to.be(shouldBeFoundTile1.y);
+    expect(notLoadedTile1.z).to.be(shouldBeFoundTile1.z);
+  });
+
+  it('should return not-prepared ranges for tree for single level with three holes',function(){
+    var tree = new schedul.qt.MapTree();
+
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2]);
+    tree.registerTileOutlineWithTile(tile3);
+      tree.overrideTileOutlineWithPath(tile3,[0,1,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    var queryTile = schedul.qt.Base.tileForPath([0,1]);
+    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    expect(notLoadedRanges.length).to.be(3);
+
+    var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0,1,0]);
+    var notLoadedTile0 = notLoadedRanges[0];
+    expect(notLoadedTile0.x).to.be(shouldBeFoundTile0.x);
+    expect(notLoadedTile0.y).to.be(shouldBeFoundTile0.y);
+    expect(notLoadedTile0.z).to.be(shouldBeFoundTile0.z);
+
+    var shouldBeFoundTile1 = schedul.qt.Base.tileForPath([0,1,1]);
+    var notLoadedTile1 = notLoadedRanges[1];
+    expect(notLoadedTile1.x).to.be(shouldBeFoundTile1.x);
+    expect(notLoadedTile1.y).to.be(shouldBeFoundTile1.y);
+    expect(notLoadedTile1.z).to.be(shouldBeFoundTile1.z);
+
+    var shouldBeFoundTile2 = schedul.qt.Base.tileForPath([0,1,3]);
+    var notLoadedTile2 = notLoadedRanges[2];
+    expect(notLoadedTile2.x).to.be(shouldBeFoundTile2.x);
+    expect(notLoadedTile2.y).to.be(shouldBeFoundTile2.y);
+    expect(notLoadedTile2.z).to.be(shouldBeFoundTile2.z);
+  });
+
+
+  it('should return not-prepared ranges for tree for multiple level with three holes',function(){
+    var tree = new schedul.qt.MapTree();
+
+    var tile3 = schedul.qt.Base.tileForPath([0,1,2,3]);
+    tree.registerTileOutlineWithTile(tile3);
+    tree.overrideTileOutlineWithPath(tile3,[0,1,2,3],schedul.qt.NodeStatus.IS_SURELY_LEAF);
+
+    var queryTile = schedul.qt.Base.tileForPath([0,1]);
+    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    expect(notLoadedRanges.length).to.be(6);
+
+    var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0,1,0]);
+    var notLoadedTile0 = notLoadedRanges[0];
+    expect(notLoadedTile0.x).to.be(shouldBeFoundTile0.x);
+    expect(notLoadedTile0.y).to.be(shouldBeFoundTile0.y);
+    expect(notLoadedTile0.z).to.be(shouldBeFoundTile0.z);
+
+    var shouldBeFoundTile1 = schedul.qt.Base.tileForPath([0,1,1]);
+    var notLoadedTile1 = notLoadedRanges[1];
+    expect(notLoadedTile1.x).to.be(shouldBeFoundTile1.x);
+    expect(notLoadedTile1.y).to.be(shouldBeFoundTile1.y);
+    expect(notLoadedTile1.z).to.be(shouldBeFoundTile1.z);
+
+    var shouldBeFoundTile2 = schedul.qt.Base.tileForPath([0,1,2,0]);
+    var notLoadedTile2 = notLoadedRanges[2];
+    expect(notLoadedTile2.x).to.be(shouldBeFoundTile2.x);
+    expect(notLoadedTile2.y).to.be(shouldBeFoundTile2.y);
+    expect(notLoadedTile2.z).to.be(shouldBeFoundTile2.z);
+
+    var shouldBeFoundTile3 = schedul.qt.Base.tileForPath([0,1,2,1]);
+    var notLoadedTile3 = notLoadedRanges[3];
+    expect(notLoadedTile3.x).to.be(shouldBeFoundTile3.x);
+    expect(notLoadedTile3.y).to.be(shouldBeFoundTile3.y);
+    expect(notLoadedTile3.z).to.be(shouldBeFoundTile3.z);
+
+    var shouldBeFoundTile4 = schedul.qt.Base.tileForPath([0,1,2,2]);
+    var notLoadedTile4 = notLoadedRanges[4];
+    expect(notLoadedTile4.x).to.be(shouldBeFoundTile4.x);
+    expect(notLoadedTile4.y).to.be(shouldBeFoundTile4.y);
+    expect(notLoadedTile4.z).to.be(shouldBeFoundTile4.z);
+
+    var shouldBeFoundTile5 = schedul.qt.Base.tileForPath([0,1,3]);
+    var notLoadedTile5 = notLoadedRanges[5];
+    expect(notLoadedTile5.x).to.be(shouldBeFoundTile5.x);
+    expect(notLoadedTile5.y).to.be(shouldBeFoundTile5.y);
+    expect(notLoadedTile5.z).to.be(shouldBeFoundTile5.z);
+  });
 });
