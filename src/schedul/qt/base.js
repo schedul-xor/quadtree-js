@@ -20,6 +20,7 @@ goog.inherits(schedul.qt.Base, goog.events.EventTarget);
 
 
 /**
+ * Tile outlines are registered, and is recommended to override it.
  * @param {!ol.TileCoord} tile
  */
 schedul.qt.Base.prototype.registerTileOutlineWithTile = function(tile){
@@ -61,6 +62,14 @@ schedul.qt.Base.prototype.overrideTileOutlineWithPath = goog.abstractMethod;
 
 
 /**
+ * Dense path is a path which isn't registered, nearest (not-existing) node which zoom level is minimum.
+ * For example, there are only one node [0,0,0,0] registered, and you may try to search for node [0,1,1,1].
+ * There are no [0,1,1,1] so the search result is "[0,1,1,1] not found". But don't you think that's too less to know?
+ * When tiles are not found, you may also want to know "from where are nodes not found". For example,
+ * [0,1,1,1] was not found but how about [0,1,1]? => NO. How about [0,1]? => NO. Then, how about [0]? Oh,
+ * there exists [0,0,0,0], which has the same ancestor [0]. So, [0,1,1,1] has nothing inside, also [0,1,1], [0,1],
+ * but not [0]. So, the tile with minimum zoom level and still has nothing inside, is [0,1]. Finally we found out
+ * that the most dense path is [0,1].
  * @param {!Array.<!number>} searchingPath
  * @param {Array.<!number>=} opt_mostDensePath
  * @return {!Array.<!number>} Found path.
@@ -89,6 +98,68 @@ schedul.qt.Base.prototype.mostDenseTileForTile = function(searchingTile){
 
   var mostDensePath = this.mostDensePathForTile(searchingTile);
   return schedul.qt.Base.tileForPath(mostDensePath);
+};
+
+
+/**
+ * @param {!Array.<!number>} path
+ * @param {Array.<!ol.TileCoord>=} opt_vessel
+ * @return {!Array.<!ol.TileCoord>}
+ */
+schedul.qt.Base.prototype.findNotLoadedRangesInsidePath = goog.abstractMethod;
+
+
+/**
+ * @param {!ol.TileCoord} tile
+ * @param {Array.<!ol.TileCoord>=} opt_vessel
+ */
+schedul.qt.Base.prototype.findNotLoadedRangesInsideTile = function(tile,opt_vessel){
+  goog.asserts.assertInstanceof(tile,ol.TileCoord);
+
+  var path = schedul.qt.Base.pathForTile(tile);
+  return this.findNotLoadedRangesInsidePath(path,opt_vessel);
+};
+
+
+/**
+ * Check if this path is a leaf. Zoom level is also checked to see if it's leaf.
+ * Returns true if it exists, and is surely leaf. Returns false if it exists but it's mysterious.
+ * @param {!Array.<!number>} path
+ * @return {!boolean}
+ */
+schedul.qt.Base.prototype.isPathSurelyLeaf = goog.abstractMethod;
+
+
+/**
+ * @param {!ol.TileCoord} tile
+ * @return {!boolean}
+ */
+schedul.qt.Base.prototype.isTileSurelyLeaf = function(tile){
+  goog.asserts.assertInstanceof(tile,ol.TileCoord);
+
+  var path = schedul.qt.Base.pathForTile(tile);
+  return this.isPathSurelyLeaf(path);
+};
+
+
+/**
+ * Check if this path is part of the requested || overridden path. This should work even if
+ * the given path contains very high zoom level.
+ * @param {!Array.<!number>} path
+ * @return {!boolean}
+ */
+schedul.qt.Base.prototype.isPathInsideSurelyLeafTile = goog.abstractMethod;
+
+
+/**
+ * @param {!ol.TileCoord} tile
+ * @return {!boolean}
+ */
+schedul.qt.Base.prototype.isTileInsideSurelyLeafTile = function(tile){
+  goog.asserts.assertInstanceof(tile,ol.TileCoord);
+
+  var path = schedul.qt.Base.pathForTile(tile);
+  return this.isPathInsideSurelyLeafTile(path);
 };
 
 
@@ -125,13 +196,14 @@ schedul.qt.Base.tileForPath = function(path, opt_limitZ) {
  * y range is from  -1 to -2^n
  *
  * @param {!ol.TileCoord} tile
- * @param {!Array.<!number>} output
+ * @param {!Array.<!number>=} opt_path
  * @param {!Array.<!number>=} opt_coordCache
+ * @return {!Array.<!number>}
  */
-schedul.qt.Base.pathForTile = function(tile, output, opt_coordCache) {
+schedul.qt.Base.pathForTile = function(tile, opt_path, opt_coordCache) {
     goog.asserts.assertInstanceof(tile,ol.TileCoord);
-    goog.asserts.assertArray(output);
 
+  var path = goog.isDefAndNotNull(opt_path)?opt_path:[];
   var tilez = tile.z;
 
   var i, j;
@@ -149,12 +221,14 @@ schedul.qt.Base.pathForTile = function(tile, output, opt_coordCache) {
     opt_coordCache[i][1] = (yt & k);
     k >>= 1;
   }
-  output.length = 0;
+  path.length = 0;
   for (i = 0; i <= tilez; i++) {
     var coord = opt_coordCache[i];
     var index = schedul.qt.Base.q2i(coord[0], coord[1]);
-    output.push(index);
+    path.push(index);
   }
+
+  return path;
 };
 
 

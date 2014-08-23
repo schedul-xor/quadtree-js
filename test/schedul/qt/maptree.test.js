@@ -81,6 +81,10 @@ describe('schedul.qt.MapTree, general',function(){
       expect(overriddenTilesLowerMatch[0].y).to.be(-4);
       expect(overriddenTilesLowerMatch[0].z).to.be(3);
       expect(overriddenTilesLowerMismatch.length).to.be(0);
+
+    expect(tree.isTileSurelyLeaf(tile)).to.be(true);
+    expect(tree.isPathInsideSurelyLeafTile([0,1,2,3,1,1])).to.be(true);
+    expect(tree.isPathInsideSurelyLeafTile([0,1,2,1,1,1])).to.be(false);
   });
 
   it('should build valid tree for [0,1,2,3] and [0,1,1,2]',function(){
@@ -165,6 +169,9 @@ describe('schedul.qt.MapTree, general',function(){
       expect(overriddenTilesUpper2Mismatch.length).to.be(0);
       expect(overriddenTilesLowerMatch.length).to.be(1);
       expect(overriddenTilesLowerMismatch.length).to.be(0);
+
+    expect(tree.isTileSurelyLeaf(tile1)).to.be(true);
+    expect(tree.isTileSurelyLeaf(tile2)).to.be(true);
   });
 
   it('should build valid tree for [0,1,2,3] and [0,1,1,2] and [0,1,3,0]',function(){
@@ -444,7 +451,7 @@ describe('schedul.qt.MapTree, general',function(){
     var tree = new schedul.qt.MapTree();
 
     var queryTile = schedul.qt.Base.tileForPath([0,1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
     expect(notLoadedRanges.length).to.be(1);
     var notLoadedFirstTile = notLoadedRanges[0];
     expect(notLoadedFirstTile.x).to.be(queryTile.x);
@@ -466,7 +473,7 @@ describe('schedul.qt.MapTree, general',function(){
       tree.overrideTileOutlineWithPath(tile3,[0,1,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0,1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
     expect(notLoadedRanges.length).to.be(1);
     var shouldBeFoundTile = schedul.qt.Base.tileForPath([0,1,3]);
     var notLoadedFirstTile = notLoadedRanges[0];
@@ -486,7 +493,7 @@ describe('schedul.qt.MapTree, general',function(){
       tree.overrideTileOutlineWithPath(tile3,[0,1,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0,1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
     expect(notLoadedRanges.length).to.be(2);
     var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0,1,1]);
     var notLoadedTile0 = notLoadedRanges[0];
@@ -509,7 +516,7 @@ describe('schedul.qt.MapTree, general',function(){
       tree.overrideTileOutlineWithPath(tile3,[0,1,2],schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0,1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
     expect(notLoadedRanges.length).to.be(3);
 
     var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0,1,0]);
@@ -540,7 +547,7 @@ describe('schedul.qt.MapTree, general',function(){
     tree.overrideTileOutlineWithPath(tile3,[0,1,2,3],schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0,1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
     expect(notLoadedRanges.length).to.be(6);
 
     var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0,1,0]);
@@ -589,7 +596,7 @@ describe('schedul.qt.MapTree, general',function(){
 
     // Query tile is inside tile3. It is already loaded!
     var queryTile = schedul.qt.Base.tileForPath([0,1,2,3,1,1,1,1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
     expect(notLoadedRanges.length).to.be(0);
   });
 
@@ -602,7 +609,7 @@ describe('schedul.qt.MapTree, general',function(){
 
     // Query tile is inside tile3. It is already loaded!
     var queryTile = schedul.qt.Base.tileForPath([0,2,2,3,1,1,1,1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInside(queryTile);
+    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
     expect(notLoadedRanges.length).to.be(1);
     var notLoadedTile0 = notLoadedRanges[0];
     expect(notLoadedTile0.x).to.be(queryTile.x);

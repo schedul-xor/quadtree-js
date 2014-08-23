@@ -236,17 +236,40 @@ schedul.qt.MapTree.prototype.mostDensePathForPath = function(searchingPath,opt_m
 
 
 /**
- * @param {!ol.TileCoord} tile
- * @param {Array.<!ol.TileCoord>=} opt_vessel
- * @return {!Array.<!ol.TileCoord>}
+ * @inheritDoc
  */
-schedul.qt.MapTree.prototype.findNotLoadedRangesInside = function(tile,opt_vessel){
-  goog.asserts.assertInstanceof(tile,ol.TileCoord);
+schedul.qt.MapTree.prototype.isPathSurelyLeaf = function(path){
+  var pathTxt = path.join('');
+  return goog.object.containsKey(this.path2status_,pathTxt) && this.path2status_[pathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF;
+};
+
+
+/**
+ * @inheritDoc
+ */
+schedul.qt.MapTree.prototype.isPathInsideSurelyLeafTile = function(path){
+  var isFound = false;
+  var popped = [];
+  while(path.length > 0){
+    if(this.isPathSurelyLeaf(path)){
+      isFound = true;
+      break;
+    }
+    popped.push(path.pop());
+  }
+  while(popped.length > 0){
+    path.push(popped.pop());
+  }
+  return isFound;
+};
+
+
+/**
+ * @inheritDoc
+ */
+schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath = function(path,opt_vessel){
   var vessel = goog.isDefAndNotNull(opt_vessel)?opt_vessel:[];
   vessel.length = 0;
-
-  var path = [];
-  schedul.qt.Base.pathForTile(tile,path);
 
   var isChildOfAlreadyLoadedTile = false;
   var mostDensePath = this.mostDensePathForPath(path);
