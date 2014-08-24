@@ -273,7 +273,7 @@ describe('schedul.qt.Base, general',function(){
   it('should return tileOutline [0](0,-1,0)->[0](0,-1,0)={0,-1,0,-1} for path [0] and zoom level 0',function(){
     var tileOutline = [];
     var path = [0];
-       schedul.qt.Base.tileOutlineAtZoomLevel(path,0,tileOutline);
+       schedul.qt.Base.tileOutlineAtZoomLevelPath(path,0,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
     expect(tileOutline[1]).to.be(0);
@@ -283,7 +283,7 @@ describe('schedul.qt.Base, general',function(){
   it('should return tileOutline [1](1,-1,0)->[2](1,-1,0)={1,-1,1,-1} for path [1] and zoom level 0',function(){
     var tileOutline = [];
     var path = [1];
-    schedul.qt.Base.tileOutlineAtZoomLevel(path,0,tileOutline);
+    schedul.qt.Base.tileOutlineAtZoomLevelPath(path,0,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(1);
     expect(tileOutline[1]).to.be(1);
@@ -293,7 +293,7 @@ describe('schedul.qt.Base, general',function(){
   it('should return tileOutline [2](0,-2,0)->[2](0,-2,0)={0,-2,0,-2} for path [2] and zoom level 0',function(){
     var tileOutline = [];
     var path = [2];
-    schedul.qt.Base.tileOutlineAtZoomLevel(path,0,tileOutline);
+    schedul.qt.Base.tileOutlineAtZoomLevelPath(path,0,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
     expect(tileOutline[1]).to.be(0);
@@ -303,7 +303,7 @@ describe('schedul.qt.Base, general',function(){
   it('should return tileOutline [0,0](0,-1,1)->[0,3](1,-2,1)={0,-1,1,-2} for path [0] and zoom level 1',function(){
     var tileOutline = [];
     var path = [0];
-    schedul.qt.Base.tileOutlineAtZoomLevel(path,1,tileOutline);
+    schedul.qt.Base.tileOutlineAtZoomLevelPath(path,1,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
     expect(tileOutline[1]).to.be(1);
@@ -313,7 +313,7 @@ describe('schedul.qt.Base, general',function(){
   it('should return tileOutline [1,0](2,-1,1)->[1,3](3,-2,1)={2,-1,3,-2} for path [1] and zoom level 1',function(){
     var tileOutline = [];
     var path = [1];
-    schedul.qt.Base.tileOutlineAtZoomLevel(path,1,tileOutline);
+    schedul.qt.Base.tileOutlineAtZoomLevelPath(path,1,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(2);
     expect(tileOutline[1]).to.be(3);
@@ -323,7 +323,7 @@ describe('schedul.qt.Base, general',function(){
   it('should return tileOutline [1,0,0](4,-1,2)->[1,3,3](7,-4,2)={4,-1,7,-4} for path [1] and zoom level 2',function(){
     var tileOutline = [];
     var path = [1];
-    schedul.qt.Base.tileOutlineAtZoomLevel(path,2,tileOutline);
+    schedul.qt.Base.tileOutlineAtZoomLevelPath(path,2,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(4);
     expect(tileOutline[1]).to.be(7);
@@ -333,7 +333,7 @@ describe('schedul.qt.Base, general',function(){
   it('should return tileOutline [0,0,0](0,-1,2)->[0,3,3](3,-4,2)={0-1,3,-4} for path [0] and zoom level 2',function(){
     var tileOutline = [];
     var path = [0];
-    schedul.qt.Base.tileOutlineAtZoomLevel(path,2,tileOutline);
+    schedul.qt.Base.tileOutlineAtZoomLevelPath(path,2,tileOutline);
     expect(path.length).to.be(1);
     expect(tileOutline[0]).to.be(0);
     expect(tileOutline[1]).to.be(3);
