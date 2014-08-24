@@ -152,6 +152,29 @@ schedul.qt.Base.prototype.findNotLoadedRangesInsideTile = function(tile,opt_vess
 
 
 /**
+ * @param {!Array.<!number>} searchingPath
+ * @param {!number} zoomLevel
+ * @return {!Array.<!ol.TileCoord>}
+ */
+schedul.qt.Base.prototype.allOverriddenTilesForPathAndZoomLevel = goog.abstractMethod;
+
+
+/**
+ * @param {!ol.TileCoord} searchingTile
+ * @param {!number} zoomLevel
+ * @return {!Array.<!ol.TileCoord>}
+ */
+schedul.qt.Base.prototype.allOverriddenTilesForTileAndZoomLevel = function(searchingTile, zoomLevel) {
+  goog.asserts.assertInstanceof(searchingTile, ol.TileCoord);
+  goog.asserts.assertNumber(zoomLevel);
+
+  var searchingPath = schedul.qt.Base.pathForTile(searchingTile);
+  return this.allOverriddenTilesForPathAndZoomLevel(searchingPath,zoomLevel);
+};
+
+
+
+/**
  * Check if this path is a leaf. Zoom level is also checked to see if it's leaf.
  * Returns true if it exists, and is surely leaf. Returns false if it exists but it's mysterious.
  * @param {!Array.<!number>} path

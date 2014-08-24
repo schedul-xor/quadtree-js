@@ -147,9 +147,7 @@ schedul.qt.MapTree.prototype.overrideTileOutlineWithPathAndPath = function(reque
 
 
 /**
- * @param {!Array.<!number>} searchingPath
- * @param {!number} zoomLevel
- * @return {!Array.<!ol.TileCoord>}
+ * @inheritDoc
  */
 schedul.qt.MapTree.prototype.
   allOverriddenTilesForPathAndZoomLevel = function(searchingPath, zoomLevel) {
@@ -236,7 +234,8 @@ schedul.qt.MapTree.prototype.mostDensePathForPath = function(searchingPath,opt_m
  */
 schedul.qt.MapTree.prototype.isPathSurelyLeaf = function(path) {
   var pathTxt = path.join('');
-  return goog.object.containsKey(this.path2status_, pathTxt) && this.path2status_[pathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF;
+  return goog.object.containsKey(this.path2status_, pathTxt) &&
+    this.path2status_[pathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF;
 };
 
 
