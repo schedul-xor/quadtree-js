@@ -43,7 +43,7 @@ schedul.qt.Base.prototype.registerTileOutlineWithPath = goog.abstractMethod;
  * @param {!schedul.qt.NodeStatus} status
  * @param {!Array.<!string>=} opt_notDirectlyRequestedButDiedTilesVessel
  */
-schedul.qt.Base.prototype.overrideTileOutlineWithTile = function(requestedTile,foundTile,status,opt_notDirectlyRequestedButDiedTilesVessel) {
+schedul.qt.Base.prototype.overrideTileOutlineWithTile = function(requestedTile, foundTile, status, opt_notDirectlyRequestedButDiedTilesVessel) {
   goog.asserts.assertInstanceof(requestedTile, ol.TileCoord);
   goog.asserts.assertInstanceof(foundTile, ol.TileCoord);
 
@@ -58,7 +58,7 @@ schedul.qt.Base.prototype.overrideTileOutlineWithTile = function(requestedTile,f
  * @param {!schedul.qt.NodeStatus} status
  * @param {!Array.<!string>=} opt_notDirectlyRequestedButDiedTileCidsVessel
  */
-schedul.qt.Base.prototype.overrideTileOutlineWithPath = function(requestedTile,foundPath, status, opt_notDirectlyRequestedButDiedTileCidsVessel) {
+schedul.qt.Base.prototype.overrideTileOutlineWithPath = function(requestedTile, foundPath, status, opt_notDirectlyRequestedButDiedTileCidsVessel) {
   goog.asserts.assertInstanceof(requestedTile, ol.TileCoord);
   goog.asserts.assertArray(foundPath);
 
@@ -82,7 +82,7 @@ schedul.qt.Base.prototype.overrideTileOutlineWithPathAndPath = goog.abstractMeth
  * @param {!ol.TileCoord} tile
  * @param {!schedul.qt.NodeStatus} status
  */
-schedul.qt.Base.prototype.registerAndOverrideWithTile = function(tile,status) {
+schedul.qt.Base.prototype.registerAndOverrideWithTile = function(tile, status) {
   goog.asserts.assertInstanceof(tile, ol.TileCoord);
 
   schedul.qt.Base.pathForTile(tile, this.pathVessel_);
@@ -142,8 +142,9 @@ schedul.qt.Base.prototype.findNotLoadedRangesInsidePath = goog.abstractMethod;
 /**
  * @param {!ol.TileCoord} tile
  * @param {Array.<!ol.TileCoord>=} opt_vessel
+ * @return {!Array.<!ol.TileCoord>}
  */
-schedul.qt.Base.prototype.findNotLoadedRangesInsideTile = function(tile,opt_vessel) {
+schedul.qt.Base.prototype.findNotLoadedRangesInsideTile = function(tile, opt_vessel) {
   goog.asserts.assertInstanceof(tile, ol.TileCoord);
 
   var path = schedul.qt.Base.pathForTile(tile);
@@ -169,7 +170,7 @@ schedul.qt.Base.prototype.allOverriddenTilesForTileAndZoomLevel = function(searc
   goog.asserts.assertNumber(zoomLevel);
 
   var searchingPath = schedul.qt.Base.pathForTile(searchingTile);
-  return this.allOverriddenTilesForPathAndZoomLevel(searchingPath,zoomLevel);
+  return this.allOverriddenTilesForPathAndZoomLevel(searchingPath, zoomLevel);
 };
 
 
@@ -220,12 +221,14 @@ schedul.qt.Base.prototype.isTileInsideSurelyLeafTile = function(tile) {
  * @param {!ol.TileCoord} tile
  * @param {!number} zoomLevel
  * @param {!Array.<!number>} resultVessel
+ * @return {!Array.<!number>}
  */
-schedul.qt.Base.tileOutlineAtZoomLevelTile = function(tile,zoomLevel,resultVessel) {
+schedul.qt.Base.tileOutlineAtZoomLevelTile = function(tile, zoomLevel, resultVessel) {
   goog.asserts.assertInstanceof(tile, ol.TileCoord);
 
   var path = schedul.qt.Base.pathForTile(tile);
-  return schedul.qt.Base.tileOutlineAtZoomLevelPath(path, zoomLevel, resultVessel);
+  schedul.qt.Base.tileOutlineAtZoomLevelPath(path, zoomLevel, resultVessel);
+  return resultVessel;
 };
 
 
@@ -235,7 +238,7 @@ schedul.qt.Base.tileOutlineAtZoomLevelTile = function(tile,zoomLevel,resultVesse
  * @param {!number} i
  * @param {!number} j
  */
-schedul.qt.Base.swapArrayElements_ = function(arr,i,j) {
+schedul.qt.Base.swapArrayElements_ = function(arr, i, j) {
   goog.asserts.assertArray(arr);
   goog.asserts.assertNumber(i);
   goog.asserts.assertNumber(j);
