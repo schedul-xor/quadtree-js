@@ -1,7 +1,8 @@
 {
-  "name": "mt-closure",
-  "version": "1.0.0",
-  "description": "Mersenne twister in Google Closure style ( https://gist.github.com/banksean/300494 )",
+  "name": "regional-quadtree",
+  "version": "0.0.1",
+  "description": "Strange quadtree",
+  "private":true,
   "scripts": {
     "start": "node tasks/serve.js",
     "test": "node tasks/test.js"
