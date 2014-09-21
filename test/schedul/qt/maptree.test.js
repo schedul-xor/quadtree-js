@@ -1,6 +1,5 @@
 require('nclosure').nclosure({additionalDeps: ['deps.js']});
 expect = require('expect.js');
-var png = require('pngjs').PNG;
 var fs = require('fs');
 
 goog.require('ol.TileCoord');
