@@ -133,22 +133,24 @@ schedul.qt.Base.prototype.mostDenseTileForTile = function(searchingTile) {
 
 /**
  * @param {!Array.<!number>} path
- * @param {Array.<!ol.TileCoord>=} opt_vessel
- * @return {!Array.<!ol.TileCoord>}
+ * @param {!Array.<!ol.TileCoord>} notLoadedVessel
+ * @param {!Array.<!ol.TileCoord>} loadedVessel
  */
 schedul.qt.Base.prototype.findNotLoadedRangesInsidePath = goog.abstractMethod;
 
 
 /**
  * @param {!ol.TileCoord} tile
- * @param {Array.<!ol.TileCoord>=} opt_vessel
- * @return {!Array.<!ol.TileCoord>}
+ * @param {!Array.<!ol.TileCoord>} notLoadedVessel
+ * @param {!Array.<!ol.TileCoord>} loadedVessel
  */
-schedul.qt.Base.prototype.findNotLoadedRangesInsideTile = function(tile, opt_vessel) {
+schedul.qt.Base.prototype.findNotLoadedRangesInsideTile = function(tile, notLoadedVessel, loadedVessel) {
   goog.asserts.assertInstanceof(tile, ol.TileCoord);
+  goog.asserts.assertArray(notLoadedVessel);
+  goog.asserts.assertArray(loadedVessel);
 
   var path = schedul.qt.Base.pathForTile(tile);
-  return this.findNotLoadedRangesInsidePath(path, opt_vessel);
+  this.findNotLoadedRangesInsidePath(path, notLoadedVessel, loadedVessel);
 };
 
 

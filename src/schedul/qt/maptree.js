@@ -267,9 +267,12 @@ schedul.qt.MapTree.prototype.isPathInsideSurelyLeafTile = function(path) {
 /**
  * @inheritDoc
  */
-schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath = function(path, opt_vessel) {
-  var vessel = goog.isDefAndNotNull(opt_vessel) ? opt_vessel : [];
-  vessel.length = 0;
+schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath = function(path, notLoadedVessel, loadedVessel) {
+  goog.asserts.assertArray(notLoadedVessel);
+  goog.asserts.assertArray(loadedVessel);
+
+  notLoadedVessel.length = 0;
+  loadedVessel.length = 0;
 
   var isChildOfAlreadyLoadedTile = false;
   var mostDensePath = this.mostDensePathForPath(path);
@@ -280,40 +283,41 @@ schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath = function(path, opt_
   }
 
   if (!isChildOfAlreadyLoadedTile) {
-    this.findNotLoadedRangesInsidePath_(path, vessel);
+    this.findNotLoadedRangesInsidePath_(path, notLoadedVessel, loadedVessel);
   }
-
-  return vessel;
 };
 
 
 /**
  * @private
  * @param {!Array.<!number>} path
- * @param {!Array.<!ol.TileCoord>} vessel
+ * @param {!Array.<!ol.TileCoord>} notLoadedVessel
+ * @param {!Array.<!ol.TileCoord>} loadedVessel
  */
-schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath_ = function(path, vessel) {
+schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath_ = function(path, notLoadedVessel, loadedVessel) {
   goog.asserts.assertArray(path);
-  goog.asserts.assertArray(vessel);
+  goog.asserts.assertArray(notLoadedVessel);
+  goog.asserts.assertArray(loadedVessel);
 
   var pathTxt = path.join('');
 
   // This path seems doesn't seem to exist! Whole inside me is what's not found.
   if (!goog.object.containsKey(this.path2status_, pathTxt)) {
     var itsMeThatDoesntExistTile = schedul.qt.Base.tileForPath(path);
-    vessel.push(itsMeThatDoesntExistTile);
+    notLoadedVessel.push(itsMeThatDoesntExistTile);
     return;
   }
 
   // I' m surely existing, and is leaf. Nothing found under me.
   if (this.path2status_[pathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF) {
+    loadedVessel.push(schedul.qt.Base.tileForPath(path));
     return;
   }
 
   var hasNoChildren = true;
   for (var i = 0; i < 4; i++) {
     path.push(i);
-    this.findNotLoadedRangesInsidePath_(path, vessel);
+    this.findNotLoadedRangesInsidePath_(path, notLoadedVessel, loadedVessel);
     path.pop();
   }
 };

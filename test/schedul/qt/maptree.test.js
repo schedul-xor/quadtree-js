@@ -1,6 +1,9 @@
 require('nclosure').nclosure({additionalDeps: ['deps.js']});
 expect = require('expect.js');
+var png = require('pngjs').PNG;
+var fs = require('fs');
 
+goog.require('ol.TileCoord');
 goog.require('schedul.qt.Base');
 goog.require('schedul.qt.MapTree');
 goog.require('schedul.qt.NodeStatus');
@@ -17,10 +20,10 @@ describe('schedul.qt.MapTree, general', function() {
     expect(tree.path2status_['0']).to.be(schedul.qt.NodeStatus.IS_MYSTERIOUS);
   });
 
-  it('should register and override at once', function(){
+  it('should register and override at once', function() {
     var tree = new schedul.qt.MapTree();
     var tile = schedul.qt.Base.tileForPath([0, 1, 2, 3]);
-    tree.registerAndOverrideWithTile(tile,schedul.qt.NodeStatus.IS_SURELY_LEAF);
+    tree.registerAndOverrideWithTile(tile, schedul.qt.NodeStatus.IS_SURELY_LEAF);
   });
 
   it('should build and update valid tree for [0,1,2,3]', function() {
@@ -457,7 +460,10 @@ describe('schedul.qt.MapTree, general', function() {
     var tree = new schedul.qt.MapTree();
 
     var queryTile = schedul.qt.Base.tileForPath([0, 1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
+    var notLoadedRanges = [];
+    var loadedRanges = [];
+    tree.findNotLoadedRangesInsideTile(queryTile, notLoadedRanges, loadedRanges);
+    expect(loadedRanges.length).to.be(0);
     expect(notLoadedRanges.length).to.be(1);
     var notLoadedFirstTile = notLoadedRanges[0];
     expect(notLoadedFirstTile.x).to.be(queryTile.x);
@@ -479,7 +485,10 @@ describe('schedul.qt.MapTree, general', function() {
       tree.overrideTileOutlineWithPath(tile3, [0, 1, 2], schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0, 1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
+    var notLoadedRanges = [];
+    var loadedRanges = [];
+    tree.findNotLoadedRangesInsideTile(queryTile, notLoadedRanges, loadedRanges);
+    expect(loadedRanges.length).to.be(3);
     expect(notLoadedRanges.length).to.be(1);
     var shouldBeFoundTile = schedul.qt.Base.tileForPath([0, 1, 3]);
     var notLoadedFirstTile = notLoadedRanges[0];
@@ -499,7 +508,10 @@ describe('schedul.qt.MapTree, general', function() {
       tree.overrideTileOutlineWithPath(tile3, [0, 1, 2], schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0, 1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
+    var notLoadedRanges = [];
+    var loadedRanges = [];
+    tree.findNotLoadedRangesInsideTile(queryTile, notLoadedRanges, loadedRanges);
+    expect(loadedRanges.length).to.be(2);
     expect(notLoadedRanges.length).to.be(2);
     var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0, 1, 1]);
     var notLoadedTile0 = notLoadedRanges[0];
@@ -522,7 +534,10 @@ describe('schedul.qt.MapTree, general', function() {
       tree.overrideTileOutlineWithPath(tile3, [0, 1, 2], schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0, 1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
+    var notLoadedRanges = [];
+    var loadedRanges = [];
+    tree.findNotLoadedRangesInsideTile(queryTile, notLoadedRanges, loadedRanges);
+    expect(loadedRanges.length).to.be(1);
     expect(notLoadedRanges.length).to.be(3);
 
     var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0, 1, 0]);
@@ -553,7 +568,10 @@ describe('schedul.qt.MapTree, general', function() {
     tree.overrideTileOutlineWithPath(tile3, [0, 1, 2, 3], schedul.qt.NodeStatus.IS_SURELY_LEAF);
 
     var queryTile = schedul.qt.Base.tileForPath([0, 1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
+    var notLoadedRanges = [];
+    var loadedRanges = [];
+    tree.findNotLoadedRangesInsideTile(queryTile, notLoadedRanges, loadedRanges);
+    expect(loadedRanges.length).to.be(1);
     expect(notLoadedRanges.length).to.be(6);
 
     var shouldBeFoundTile0 = schedul.qt.Base.tileForPath([0, 1, 0]);
@@ -602,7 +620,10 @@ describe('schedul.qt.MapTree, general', function() {
 
     // Query tile is inside tile3. It is already loaded!
     var queryTile = schedul.qt.Base.tileForPath([0, 1, 2, 3, 1, 1, 1, 1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
+    var notLoadedRanges = [];
+    var loadedRanges = [];
+    tree.findNotLoadedRangesInsideTile(queryTile, notLoadedRanges, loadedRanges);
+    expect(loadedRanges.length).to.be(0);
     expect(notLoadedRanges.length).to.be(0);
   });
 
@@ -615,7 +636,10 @@ describe('schedul.qt.MapTree, general', function() {
 
     // Query tile is inside tile3. It is already loaded!
     var queryTile = schedul.qt.Base.tileForPath([0, 2, 2, 3, 1, 1, 1, 1]);
-    var notLoadedRanges = tree.findNotLoadedRangesInsideTile(queryTile);
+    var notLoadedRanges = [];
+    var loadedRanges = [];
+    tree.findNotLoadedRangesInsideTile(queryTile, notLoadedRanges, loadedRanges);
+    expect(loadedRanges.length).to.be(0);
     expect(notLoadedRanges.length).to.be(1);
     var notLoadedTile0 = notLoadedRanges[0];
     expect(notLoadedTile0.x).to.be(queryTile.x);
@@ -623,4 +647,35 @@ describe('schedul.qt.MapTree, general', function() {
     expect(notLoadedTile0.z).to.be(queryTile.z);
   });
 
+  it('should iterate all leaves inside tilerange', function() {
+    var tree = new schedul.qt.MapTree(true);
+  });
+
+  // it('should return all leaves inside extent',function(done){
+  //   var tree = new schedul.qt.MapTree(true);
+  //   var tile1 = schedul.qt.Base.tileForPath([0, 2, 2, 3, 1, 1, 1, 1]);
+  //   var tile2 = schedul.qt.Base.tileForPath([0,2,2,3,1,0,0,0]);
+
+  //   fs.createReadStream('resources/test_sample.png')
+  //     .pipe(new png({
+  //       filterType: 4
+  //     }))
+  //     .on('parsed', function() {
+  //       for (var y = 0; y < this.height; y++) {
+  //         for (var x = 0; x < this.width; x++) {
+  //           var idx = (this.width * y + x) << 2;
+  //           var r = this.data[idx];
+  //           var g = this.data[idx+1];
+  //           var b = this.data[idx+2];
+  //           if(r == 0 && g == 0 && b ==0){
+  //             continue;
+  //           }
+  //           var tile = new ol.TileCoord(6,-x,y);
+  //           tree.registerAndOverrideWithTile(tile,schedul.qt.NodeStatus.IS_SURELY_LEAF);
+  //         }
+  //         console.log(y);
+  //       }
+  //       done();
+  //     });
+  // });
 });

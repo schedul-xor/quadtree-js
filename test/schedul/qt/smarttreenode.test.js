@@ -1,2 +1,2 @@
-describe('schedul.qt.SmartTreeNode',function(){
+describe('schedul.qt.SmartTreeNode', function() {
 });
