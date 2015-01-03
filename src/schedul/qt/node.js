@@ -12,7 +12,7 @@ goog.require('schedul.qt.NodeStatus');
 schedul.qt.Node = function(opt_status){
   this.children_ = [null,null,null,null];
   this.parent_ = null;
-  this.status_ = schedul.qt.NodeStatus.PROCESSING;
+  this.status_ = schedul.qt.NodeStatus.ROOT;
   if(goog.isDefAndNotNull(opt_status)){
     this.status_ = opt_status;
   }
@@ -43,7 +43,7 @@ schedul.qt.Node.prototype.getChild = function(slot){
 
 
 /**
- * @param {?schedul.qt.Node} parentNode
+ * @param {?schedul.qt.Node} parent
  */
 schedul.qt.Node.prototype.setParent = function(parent){
   this.parent_ = parent;

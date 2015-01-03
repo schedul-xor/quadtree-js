@@ -190,6 +190,7 @@ schedul.qt.Tree.prototype.forEachProbablyExistingPathsInPath = function(targetPa
  * @param {!number} diggingPathDepthLimit
  * @param {S=} opt_obj Scope.
  * @return {!number}
+ * @template S
  */
 schedul.qt.Tree.prototype.forEachProbablyExistingPathsInNode_ = function(node,foundChildren,callback,diggingPathDepthLimit,opt_obj){
   goog.asserts.assertFunction(callback);
