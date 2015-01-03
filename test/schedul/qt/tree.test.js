@@ -225,3 +225,38 @@ describe('schedul.qt.Tree with two empty, two existing terminals merged', functi
     },this,5);
   });
 });
+
+
+
+///
+/// PARTIAL TREE TRANSFERRING
+///
+// 00001111
+// 00001111
+// 00011111
+// 11001110
+// 01110100
+// 00111100
+// 00011000
+// 00000000
+///
+describe('schedul.qt.Tree with one single existing terminal', function() {
+  var t0 = new schedul.qt.Tree();
+  var t1 = new schedul.qt.Tree();
+
+  t0.addTerminal([0,0,0],false);t0.addTerminal([0,0,1],false);t0.addTerminal([0,1,0],false);t0.addTerminal([0,1,1],false);t0.addTerminal([1,0,0],true);t0.addTerminal([1,0,1],true);t0.addTerminal([1,1,0],true);t0.addTerminal([1,1,1],true);
+  t0.addTerminal([0,0,2],false);t0.addTerminal([0,0,3],false);t0.addTerminal([0,1,1],false);t0.addTerminal([0,1,3],false);t0.addTerminal([1,0,2],true);t0.addTerminal([1,0,3],true);t0.addTerminal([1,1,2],true);t0.addTerminal([1,1,3],true);
+  t0.addTerminal([0,2,0],false);t0.addTerminal([0,2,1],false);t0.addTerminal([0,3,0],false);t0.addTerminal([0,3,1],true);t0.addTerminal([1,2,0],true);t0.addTerminal([1,2,1],true);t0.addTerminal([1,3,0],true);t0.addTerminal([1,3,1],true);
+  t0.addTerminal([0,2,2],true);t0.addTerminal([0,2,3],true);t0.addTerminal([0,3,1],false);t0.addTerminal([0,3,3],false);t0.addTerminal([1,2,2],true);t0.addTerminal([1,2,3],true);t0.addTerminal([1,3,2],true);t0.addTerminal([1,3,3],false);
+  t0.addTerminal([2,0,0],false);t0.addTerminal([2,0,1],true);t0.addTerminal([2,1,0],true);t0.addTerminal([2,1,1],true);t0.addTerminal([3,0,0],false);t0.addTerminal([3,0,1],true);t0.addTerminal([3,1,0],false);t0.addTerminal([3,1,1],false);
+  t0.addTerminal([2,0,2],false);t0.addTerminal([2,0,3],false);t0.addTerminal([2,1,1],true);t0.addTerminal([2,1,3],true);t0.addTerminal([3,0,2],true);t0.addTerminal([3,0,3],true);t0.addTerminal([3,1,2],false);t0.addTerminal([3,1,3],false);
+  t0.addTerminal([2,2,0],false);t0.addTerminal([2,2,1],false);t0.addTerminal([2,3,0],false);t0.addTerminal([2,3,1],true);t0.addTerminal([3,2,0],true);t0.addTerminal([3,2,1],false);t0.addTerminal([3,3,0],false);t0.addTerminal([3,3,1],false);
+  t0.addTerminal([2,2,2],false);t0.addTerminal([2,2,3],false);t0.addTerminal([2,3,1],false);t0.addTerminal([2,3,3],false);t0.addTerminal([3,2,2],false);t0.addTerminal([3,2,3],false);t0.addTerminal([3,3,2],false);t0.addTerminal([3,3,3],false);
+
+  it('should transfer areas in [0,1]',function(){
+    // Transfer areas in [0,1]
+    t0.forEachProbablyExistingPathsInPath([],function(path,status){
+      console.log(path,status);
+    },this,4);
+  });
+});

@@ -12,27 +12,27 @@ goog.require('schedul.qt.NodeStatus');
  */
 schedul.qt.Tree = function(){
   this.root_ = new schedul.qt.Node(schedul.qt.NodeStatus.ROOT);
+  /**
+   * @private
+   * @type {!{i:!number,node:!schedul.qt.Node}}
+   */
+  this.foundAppendingStatus_ = {
+    i:0,
+    node:this.root_
+  };
 };
 
 
 /**
+ * @private
  * @param {!Array.<!number>} addingPath
- * @param {!boolean} isExisting
  */
-schedul.qt.Tree.prototype.addTerminal = function(addingPath,isExisting){
-  goog.asserts.assertArray(addingPath);
-  goog.array.forEach(addingPath,function(slot,index){
-    goog.asserts.assertNumber(slot);
-    goog.asserts.assert(slot === 0 || slot === 1 || slot === 2 || slot === 3,slot+' is an invalid slot.');
-  },this);
-  goog.asserts.assertBoolean(isExisting);
-
-  // Find the appending node
+schedul.qt.Tree.prototype.findAppendingNode_ = function(addingPath){
   var currentNode = this.root_;
-  var appendingRootNode = null;
-  var appendingPathIndex = 0;
-  for(;appendingPathIndex < addingPath.length;appendingPathIndex++){
-    var slot = addingPath[appendingPathIndex];
+  var appendingRootNode = currentNode; // Temporary value
+  var i = 0;
+  for(;i < addingPath.length;i++){
+    var slot = addingPath[i];
     var childNode = currentNode.getChild(slot);
     if(goog.isNull(childNode)){
       appendingRootNode = currentNode;
@@ -40,28 +40,50 @@ schedul.qt.Tree.prototype.addTerminal = function(addingPath,isExisting){
     }
     currentNode = childNode;
   }
-  // currentNode is the appending node!
+  this.foundAppendingStatus_.node = appendingRootNode;
+  this.foundAppendingStatus_.i= i;
+};
 
-  // append rest of the nodes required
+
+/**
+ * @private
+ * @param {!Array.<!number>} addingPath
+ * @param {!schedul.qt.Node} appendingNode
+ * @param {!number} appendingPathIndex
+ * @param {!schedul.qt.NodeStatus} finalStatus
+ */
+schedul.qt.Tree.prototype.appendRestOfTheNodesRequired_ = function(addingPath,appendingNode,appendingPathIndex,finalStatus){
+  goog.asserts.assertInstanceof(appendingNode,schedul.qt.Node);
+  goog.asserts.assertNumber(appendingPathIndex);
+  goog.asserts.assertNumber(finalStatus);
+
   for(var i = appendingPathIndex;i < addingPath.length;i++){
     var appendingSlot = addingPath[i];
-    var status = (i === addingPath.length-1)?
-      (isExisting?schedul.qt.NodeStatus.EXISTING_TERMINAL:schedul.qt.NodeStatus.EMPTY_TERMINAL):
-      schedul.qt.NodeStatus.GRAY;
+    var status = (i < addingPath.length-1)?
+      schedul.qt.NodeStatus.GRAY:
+      finalStatus;
     var newChildNode = new schedul.qt.Node(status);
-    currentNode.updateChild(newChildNode,appendingSlot);
-    newChildNode.setParent(currentNode);
-    var newPathCache = goog.array.clone(currentNode.getPathCache());
+    appendingNode.updateChild(newChildNode,appendingSlot);
+    newChildNode.setParent(appendingNode);
+    var newPathCache = goog.array.clone(appendingNode.getPathCache());
     newPathCache.push(appendingSlot);
     newChildNode.setPathCache(newPathCache);
 
-    currentNode = newChildNode;
+    appendingNode = newChildNode;
   }
-  // currentNode is the new leaf!
+  return appendingNode;
+};
 
-  // Merge full nodes from leaves
+
+/**
+ * @private
+ * @param {!schedul.qt.Node} endNode
+ */
+schedul.qt.Tree.prototype.mergeParents_ = function(endNode){
+  goog.asserts.assertInstanceof(endNode,schedul.qt.Node);
+
   while(true){
-    var parentNode = currentNode.getParent();
+    var parentNode = endNode.getParent();
     if(goog.isNull(parentNode)){break;}
     var thereAreStillGrayChildrenLeft = false;
     var foundExistingLeaves = 0;
@@ -89,11 +111,11 @@ schedul.qt.Tree.prototype.addTerminal = function(addingPath,isExisting){
     if(thereAreStillGrayChildrenLeft){ break; } // Exiting while-loop
 
     var merged = false;
-    if(foundEmptyLeaves === 0){
+    if(foundEmptyLeaves < 1){ // === 0
       // All children are existing-terminal => update parent to existing-terminal
       parentNode.setStatus(schedul.qt.NodeStatus.EXISTING_TERMINAL);
       merged = true;
-    }else if(foundExistingLeaves === 0){
+    }else if(foundExistingLeaves < 1){ // === 0
       parentNode.setStatus(schedul.qt.NodeStatus.EMPTY_TERMINAL);
       merged = true;
     }else{
@@ -105,8 +127,55 @@ schedul.qt.Tree.prototype.addTerminal = function(addingPath,isExisting){
       }
     }
 
-    currentNode = parentNode;
+    endNode = parentNode;
   }
+};
+
+
+/**
+ * @param {!Array.<!number>} addingPath
+ * @param {!boolean} isExisting
+ */
+schedul.qt.Tree.prototype.addTerminal = function(addingPath,isExisting){
+  schedul.qt.Tree.assertPath_(addingPath);
+  goog.asserts.assertBoolean(isExisting);
+
+  // Find the appending node
+  this.findAppendingNode_(addingPath);
+  var appendingPathIndex = this.foundAppendingStatus_.i;
+  var appendingNode = this.foundAppendingStatus_.node;
+  goog.asserts.assertInstanceof(appendingNode,schedul.qt.Node);
+
+  // append rest of the nodes required
+  var endNode = this.appendRestOfTheNodesRequired_(
+    addingPath,
+    appendingNode,
+    appendingPathIndex,
+    isExisting?schedul.qt.NodeStatus.EXISTING_TERMINAL:schedul.qt.NodeStatus.EMPTY_TERMINAL);
+
+  // Merge full nodes from leaves
+  this.mergeParents_(endNode);
+};
+
+
+/**
+ * @param {!Array.<!number>} addingPath
+ */
+schedul.qt.Tree.prototype.addGray = function(addingPath){
+  schedul.qt.Tree.assertPath_(addingPath);
+
+  // Find the appending node
+  this.findAppendingNode_(addingPath);
+  var appendingPathIndex = this.foundAppendingStatus_.i;
+  var appendingNode = this.foundAppendingStatus_.node;
+  goog.asserts.assertInstanceof(appendingNode,schedul.qt.Node);
+
+  // append rest of the nodes required
+  var endNode = this.appendRestOfTheNodesRequired_(
+    addingPath,
+    appendingNode,
+    appendingPathIndex,
+    schedul.qt.NodeStatus.GRAY);
 };
 
 
@@ -158,12 +227,13 @@ schedul.qt.Tree.prototype.forEachProbablyExistingPathsInPath = function(targetPa
   var openNodes = foundNodes0;
   var closedNodes = foundNodes1;
 
+  // Dig inside current found nodes
   while(true){
     goog.array.forEach(openNodes,function(openNode,index){
       diggingPathDepthLimit = this.forEachProbablyExistingPathsInNode_(openNode,closedNodes,callback,diggingPathDepthLimit,opt_obj);
     },this);
 
-    if(closedNodes.length === 0){ break; }
+    if(closedNodes.length < 1){ break; }
 
     if(diggingPathDepthLimit < 0){
       goog.array.forEach(closedNodes,function(closedNode,index){
@@ -172,11 +242,12 @@ schedul.qt.Tree.prototype.forEachProbablyExistingPathsInPath = function(targetPa
       return;
     }
 
-    // Swap
+    // Swap node arrays
     var t = closedNodes;
     closedNodes = openNodes;
     openNodes = t;
 
+    // Empty closed nodes
     closedNodes.length = 0;
   }
 };
@@ -227,4 +298,17 @@ schedul.qt.Tree.prototype.forEachProbablyExistingPathsInNode_ = function(node,fo
     break;
   }
   return diggingPathDepthLimit;
+};
+
+
+/**
+ * @private
+ * @param {!Array.<!number>} path
+ */
+schedul.qt.Tree.assertPath_ = function(path){
+  goog.asserts.assertArray(path);
+  goog.array.forEach(path,function(slot,index){
+    goog.asserts.assertNumber(slot);
+    goog.asserts.assert(slot === 0 || slot === 1 || slot === 2 || slot === 3,slot+' is an invalid slot.');
+  });
 };
