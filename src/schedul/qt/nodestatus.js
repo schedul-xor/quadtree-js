@@ -3,12 +3,11 @@ goog.provide('schedul.qt.NodeStatus');
 
 
 /**
- * @enum {!number}
+ * @enum {!string}
  */
 schedul.qt.NodeStatus = {
-  ROOT:0,
-  EXISTING_TERMINAL:1,
-  EMPTY_TERMINAL:2,
-  SURELY_MIXED:3,
-  GRAY:4
+  GRAY: 'gray',
+  EXISTING_TERMINAL: 'existing_terminal',
+  EMPTY_TERMINAL: 'empty_terminal',
+  SURELY_MIXED: 'surely_mixed'
 };
