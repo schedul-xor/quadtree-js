@@ -3,5 +3,6 @@ deps.js
 ol3-master
 sortedarray-closure-master
 src/ol
-src/javascript
 master.zip
+*~
+plain.min.js

@@ -59,7 +59,7 @@ schedul.qt.Tree.prototype.findAppendingNode_ = function(addingPath) {
 schedul.qt.Tree.prototype.appendRestOfTheNodesRequired_ = function(addingPath, appendingNode, appendingPathIndex, finalStatus) {
   goog.asserts.assertInstanceof(appendingNode, schedul.qt.Node);
   goog.asserts.assertNumber(appendingPathIndex);
-  goog.asserts.assertString(finalStatus);
+  goog.asserts.assertNumber(finalStatus);
 
   for (var i = appendingPathIndex; i < addingPath.length; i++) {
     var appendingSlot = addingPath[i];
