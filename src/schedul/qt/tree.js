@@ -11,7 +11,7 @@ goog.require('schedul.qt.NodeStatus');
  * @constructor
  */
 schedul.qt.Tree = function() {
-  this.root_ = new schedul.qt.Node(schedul.qt.NodeStatus.GRAY);
+  this.root_ = new schedul.qt.Node(null,schedul.qt.NodeStatus.GRAY);
 
   /**
    * @private
@@ -55,18 +55,21 @@ schedul.qt.Tree.prototype.findAppendingNode_ = function(addingPath) {
  * @param {!schedul.qt.Node} appendingNode
  * @param {!number} appendingPathIndex
  * @param {!schedul.qt.NodeStatus} finalStatus
+ * @param {!V} value
+ * @template V
  */
-schedul.qt.Tree.prototype.appendRestOfTheNodesRequired_ = function(addingPath, appendingNode, appendingPathIndex, finalStatus) {
+schedul.qt.Tree.prototype.appendRestOfTheNodesRequired_ = function(addingPath, appendingNode, appendingPathIndex, finalStatus, value) {
   goog.asserts.assertInstanceof(appendingNode, schedul.qt.Node);
   goog.asserts.assertNumber(appendingPathIndex);
   goog.asserts.assertNumber(finalStatus);
+  goog.asserts.assert(goog.isDefAndNotNull(value));
 
   for (var i = appendingPathIndex; i < addingPath.length; i++) {
     var appendingSlot = addingPath[i];
     var status = (i < addingPath.length - 1) ?
       schedul.qt.NodeStatus.GRAY :
       finalStatus;
-    var newChildNode = new schedul.qt.Node(status);
+    var newChildNode = new schedul.qt.Node(null,status);
     appendingNode.updateChild(newChildNode, appendingSlot);
     newChildNode.setParent(appendingNode);
     var newPathCache = goog.array.clone(appendingNode.getPathCache());
@@ -139,8 +142,10 @@ schedul.qt.Tree.prototype.mergeParentsFromEnd_ = function(endNode) {
 /**
  * @param {!Array.<!number>} addingPath
  * @param {!boolean} isExisting
+ * @param {!V} value
+ * @template V
  */
-schedul.qt.Tree.prototype.addTerminal = function(addingPath, isExisting) {
+schedul.qt.Tree.prototype.addTerminal = function(addingPath, isExisting,value) {
   schedul.qt.Node.assertPath(addingPath);
   goog.asserts.assertBoolean(isExisting);
 
@@ -155,7 +160,8 @@ schedul.qt.Tree.prototype.addTerminal = function(addingPath, isExisting) {
     addingPath,
     appendingNode,
     appendingPathIndex,
-    isExisting ? schedul.qt.NodeStatus.EXISTING_TERMINAL : schedul.qt.NodeStatus.EMPTY_TERMINAL);
+    isExisting ? schedul.qt.NodeStatus.EXISTING_TERMINAL : schedul.qt.NodeStatus.EMPTY_TERMINAL,
+    value);
 
   // Merge full nodes from leaves
   this.mergeParentsFromEnd_(endNode);
@@ -179,15 +185,16 @@ schedul.qt.Tree.prototype.addGray = function(addingPath) {
     addingPath,
     appendingNode,
     appendingPathIndex,
-    schedul.qt.NodeStatus.GRAY);
+    schedul.qt.NodeStatus.GRAY,
+    null);
 };
 
 
 /**
  * @param {!Array.<!number>} targetPath
- * @param {function(this: S, !Array.<!number>,schedul.qt.NodeStatus): *} callback Callback.
+ * @param {function(this: S, !Array.<!number>,schedul.qt.NodeStatus,?V): *} callback Callback.
  * @param {S=} opt_obj Scope.
- * @template S
+ * @template S,V
  */
 schedul.qt.Tree.prototype.forEachShallowPathsInPath = function(targetPath, callback, opt_obj) {
   schedul.qt.Node.assertPath(targetPath);
@@ -218,7 +225,7 @@ schedul.qt.Tree.prototype.forEachShallowPathsInPath = function(targetPath, callb
   if (isInvalidPath) {
     var invalidRootPath = goog.array.clone(startingNode.getPathCache());
     invalidRootPath.push(targetPath[startingIndex]);
-    callback.call(opt_obj, invalidRootPath, schedul.qt.NodeStatus.GRAY);
+    callback.call(opt_obj, invalidRootPath, schedul.qt.NodeStatus.GRAY, null);
     return;
   }
 
@@ -256,9 +263,9 @@ schedul.qt.Tree.prototype.forEachShallowPathsInPath = function(targetPath, callb
  * @private
  * @param {!schedul.qt.Node} node
  * @param {!Array.<!schedul.qt.Node>} foundChildren
- * @param {function(this: S, !Array.<!number>,schedul.qt.NodeStatus): *} callback Callback.
+ * @param {function(this: S, !Array.<!number>,schedul.qt.NodeStatus,?V): *} callback Callback.
  * @param {S=} opt_obj Scope.
- * @template S
+ * @template S,V
  */
 schedul.qt.Tree.prototype.forEachShallowPathsInNode_ = function(node, foundChildren, callback, opt_obj) {
   goog.asserts.assertFunction(callback);
@@ -268,7 +275,8 @@ schedul.qt.Tree.prototype.forEachShallowPathsInNode_ = function(node, foundChild
   switch (nodeStatus) {
   case schedul.qt.NodeStatus.EXISTING_TERMINAL:
   case schedul.qt.NodeStatus.EMPTY_TERMINAL:
-    callback.call(opt_obj, pathCache, nodeStatus);
+    var value = node.getValue();
+    callback.call(opt_obj, pathCache, nodeStatus, value);
     break;
   case schedul.qt.NodeStatus.SURELY_MIXED:
     for (var i = 0; i < 4; i++) {
@@ -281,7 +289,7 @@ schedul.qt.Tree.prototype.forEachShallowPathsInNode_ = function(node, foundChild
       var child = node.getChild(i);
       if (goog.isNull(child)) {
         pathCache.push(i);
-        callback.call(opt_obj, pathCache, schedul.qt.NodeStatus.GRAY);
+        callback.call(opt_obj, pathCache, schedul.qt.NodeStatus.GRAY, null);
         pathCache.pop();
       }else {
         foundChildren.push(child);
@@ -294,6 +302,7 @@ schedul.qt.Tree.prototype.forEachShallowPathsInNode_ = function(node, foundChild
 
 /**
  * @param {!Array.<!number>} path
+ * @return {!number}
  */
 schedul.qt.Tree.prototype.statusForPath = function(path) {
   this.findAppendingNode_(path);
@@ -302,4 +311,19 @@ schedul.qt.Tree.prototype.statusForPath = function(path) {
     return schedul.qt.NodeStatus.GRAY;
   }
   return appendingNode.getStatus();
+};
+
+
+/**
+ * @param {!Array.<!number>} path
+ * @return {?V}
+ * @template V
+ */
+schedul.qt.Tree.prototype.valueForPath = function(path){
+  this.findAppendingNode_(path);
+  var appendingNode = this.foundAppendingStatus_.node;
+  if (goog.isNull(appendingNode)) {
+    return null;
+  }
+  return appendingNode.getValue();
 };

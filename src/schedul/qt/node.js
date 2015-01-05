@@ -7,9 +7,12 @@ goog.require('schedul.qt.NodeStatus');
 
 /**
  * @constructor
+ * @param {?V} value
  * @param {!schedul.qt.NodeStatus=} opt_status
+ * @template V
  */
-schedul.qt.Node = function(opt_status) {
+schedul.qt.Node = function(value,opt_status) {
+  this.value_ = value;
   this.children_ = [null, null, null, null];
   this.parent_ = null;
   this.status_ = schedul.qt.NodeStatus.GRAY;
@@ -17,6 +20,24 @@ schedul.qt.Node = function(opt_status) {
     this.status_ = opt_status;
   }
   this.pathCache_ = [];
+};
+
+
+/**
+ * @param {?V} value
+ * @template V
+ */
+schedul.qt.Node.prototype.setValue = function(value){
+  this.value_ = value;
+};
+
+
+/**
+ * @return {?V}
+ * @template V
+ */
+schedul.qt.Node.prototype.getValue = function(){
+  return this.value_;
 };
 
 

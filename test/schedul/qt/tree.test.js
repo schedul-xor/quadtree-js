@@ -35,7 +35,7 @@ describe('empty schedul.qt.Tree',function(){
 ///
 describe('schedul.qt.Tree with one single existing terminal', function() {
   var tree = new schedul.qt.Tree();
-  tree.addTerminal([0,1,2,3],true);
+  tree.addTerminal([0,1,2,3],true,'terminal0123');
 
   var r = tree.root_;
   it('should build valid tree at level 0',function(){
@@ -114,8 +114,8 @@ describe('schedul.qt.Tree with one single existing terminal', function() {
 ///
 describe('schedul.qt.Tree with two existing terminals', function() {
   var tree = new schedul.qt.Tree();
-  tree.addTerminal([0,1,2,3],true);
-  tree.addTerminal([0,1,2,2],true);
+  tree.addTerminal([0,1,2,3],true,'terminal0123');
+  tree.addTerminal([0,1,2,2],true,'terminal0122');
 
   it('should return build valid tree',function(){
     var r = tree.root_;
@@ -160,10 +160,10 @@ describe('schedul.qt.Tree with two existing terminals', function() {
 ///
 describe('schedul.qt.Tree with four existing terminals merged', function() {
   var tree = new schedul.qt.Tree();
-  tree.addTerminal([0,1,2,3],true);
-  tree.addTerminal([0,1,2,2],true);
-  tree.addTerminal([0,1,2,0],true);
-  tree.addTerminal([0,1,2,1],true);
+  tree.addTerminal([0,1,2,3],true,'terminal0123');
+  tree.addTerminal([0,1,2,2],true,'terminal0122');
+  tree.addTerminal([0,1,2,0],true,'terminal0120');
+  tree.addTerminal([0,1,2,1],true,'terminal0121');
 
   it('should return build valid tree',function(){
     var r = tree.root_;
@@ -198,10 +198,10 @@ describe('schedul.qt.Tree with four existing terminals merged', function() {
 ///
 describe('schedul.qt.Tree with four empty terminals merged', function() {
   var tree = new schedul.qt.Tree();
-  tree.addTerminal([0,1,2,3],false);
-  tree.addTerminal([0,1,2,2],false);
-  tree.addTerminal([0,1,2,0],false);
-  tree.addTerminal([0,1,2,1],false);
+  tree.addTerminal([0,1,2,3],false,'terminal0123');
+  tree.addTerminal([0,1,2,2],false,'terminal0122');
+  tree.addTerminal([0,1,2,0],false,'terminal0120');
+  tree.addTerminal([0,1,2,1],false,'terminal0121');
 
   it('should return build valid tree',function(){
     var r = tree.root_;
@@ -236,10 +236,10 @@ describe('schedul.qt.Tree with four empty terminals merged', function() {
 ///
 describe('schedul.qt.Tree with two empty, two existing terminals merged', function() {
   var tree = new schedul.qt.Tree();
-  tree.addTerminal([0,1,2,3],false);
-  tree.addTerminal([0,1,2,2],true);
-  tree.addTerminal([0,1,2,0],true);
-  tree.addTerminal([0,1,2,1],false);
+  tree.addTerminal([0,1,2,3],false,'terminal0123');
+  tree.addTerminal([0,1,2,2],true,'terminal0122');
+  tree.addTerminal([0,1,2,0],true,'terminal0120');
+  tree.addTerminal([0,1,2,1],false,'terminal0121');
 
   it('should return build valid tree',function(){
     var r = tree.root_;
@@ -296,28 +296,28 @@ describe('sparse schedul.qt.Tree', function() {
   var F = false;
 
   t0.at = t0.addTerminal; // Temporary alias
-  t0.at([0,0,0],F);t0.at([0,0,1],F);t0.at([0,1,0],F);t0.at([0,1,1],T);t0.at([1,0,0],T);t0.at([1,0,1],F);t0.at([1,1,0],F);t0.at([1,1,1],F);
-  t0.at([0,0,2],F);t0.at([0,0,3],F);t0.at([0,1,2],F);t0.at([0,1,3],F);t0.at([1,0,2],T);t0.at([1,0,3],F);t0.at([1,1,2],F);t0.at([1,1,3],F);
-  t0.at([0,2,0],F);t0.at([0,2,1],F);t0.at([0,3,0],F);t0.at([0,3,1],F);t0.at([1,2,0],T);t0.at([1,2,1],F);t0.at([1,3,0],F);t0.at([1,3,1],F);
-  t0.at([0,2,2],F);t0.at([0,2,3],F);t0.at([0,3,2],F);t0.at([0,3,3],F);t0.at([1,2,2],F);t0.at([1,2,3],T);t0.at([1,3,2],F);t0.at([1,3,3],F);
-  t0.at([2,0,0],F);t0.at([2,0,1],F);t0.at([2,1,0],F);t0.at([2,1,1],F);t0.at([3,0,0],F);t0.at([3,0,1],T);t0.at([3,1,0],F);t0.at([3,1,1],F);
-  t0.at([2,0,2],F);t0.at([2,0,3],F);t0.at([2,1,2],F);t0.at([2,1,3],F);t0.at([3,0,2],F);t0.at([3,0,3],T);t0.at([3,1,2],T);t0.at([3,1,3],F);
-  t0.at([2,2,0],F);t0.at([2,2,1],F);t0.at([2,3,0],F);t0.at([2,3,1],F);t0.at([3,2,0],F);t0.at([3,2,1],F);t0.at([3,3,0],T);t0.at([3,3,1],T);
-  t0.at([2,2,2],F);t0.at([2,2,3],F);t0.at([2,3,2],F);t0.at([2,3,3],F);t0.at([3,2,2],F);t0.at([3,2,3],F);
+  t0.at([0,0,0],F,0);t0.at([0,0,1],F,0);t0.at([0,1,0],F,0);t0.at([0,1,1],T,1);t0.at([1,0,0],T,1);t0.at([1,0,1],F,0);t0.at([1,1,0],F,0);t0.at([1,1,1],F,0);
+  t0.at([0,0,2],F,0);t0.at([0,0,3],F,0);t0.at([0,1,2],F,0);t0.at([0,1,3],F,0);t0.at([1,0,2],T,1);t0.at([1,0,3],F,0);t0.at([1,1,2],F,0);t0.at([1,1,3],F,0);
+  t0.at([0,2,0],F,0);t0.at([0,2,1],F,0);t0.at([0,3,0],F,0);t0.at([0,3,1],F,0);t0.at([1,2,0],T,1);t0.at([1,2,1],F,0);t0.at([1,3,0],F,0);t0.at([1,3,1],F,0);
+  t0.at([0,2,2],F,0);t0.at([0,2,3],F,0);t0.at([0,3,2],F,0);t0.at([0,3,3],F,0);t0.at([1,2,2],F,0);t0.at([1,2,3],T,1);t0.at([1,3,2],F,0);t0.at([1,3,3],F,0);
+  t0.at([2,0,0],F,0);t0.at([2,0,1],F,0);t0.at([2,1,0],F,0);t0.at([2,1,1],F,0);t0.at([3,0,0],F,0);t0.at([3,0,1],T,1);t0.at([3,1,0],F,0);t0.at([3,1,1],F,0);
+  t0.at([2,0,2],F,0);t0.at([2,0,3],F,0);t0.at([2,1,2],F,0);t0.at([2,1,3],F,0);t0.at([3,0,2],F,0);t0.at([3,0,3],T,1);t0.at([3,1,2],T,1);t0.at([3,1,3],F,0);
+  t0.at([2,2,0],F,0);t0.at([2,2,1],F,0);t0.at([2,3,0],F,0);t0.at([2,3,1],F,0);t0.at([3,2,0],F,0);t0.at([3,2,1],F,0);t0.at([3,3,0],T,1);t0.at([3,3,1],T,1);
+  t0.at([2,2,2],F,0);t0.at([2,2,3],F,0);t0.at([2,3,2],F,0);t0.at([2,3,3],F,0);t0.at([3,2,2],F,0);t0.at([3,2,3],F,0);
 
-  t0.at([3,3,2,0],T);
-  t0.at([3,3,2,1],T);
-  t0.at([3,3,2,2],F);
-  t0.at([3,3,2,3],F);
+  t0.at([3,3,2,0],T,1);
+  t0.at([3,3,2,1],T,1);
+  t0.at([3,3,2,2],F,0);
+  t0.at([3,3,2,3],F,0);
 
-  t0.at([3,3,3,0,0],T);
-  t0.at([3,3,3,0,1],T);
-  t0.at([3,3,3,0,2],T);
-  t0.at([3,3,3,0,3],F);
+  t0.at([3,3,3,0,0],T,1);
+  t0.at([3,3,3,0,1],T,1);
+  t0.at([3,3,3,0,2],T,1);
+  t0.at([3,3,3,0,3],F,0);
 
-  t0.at([3,3,3,1],F);
-  t0.at([3,3,3,2],F);
-  t0.at([3,3,3,3],F);
+  t0.at([3,3,3,1],F,0);
+  t0.at([3,3,3,2],F,0);
+  t0.at([3,3,3,3],F,0);
 
   it('should transfer tiles',function(){
     for(var x = 0;x < 4;x++){
@@ -333,10 +333,10 @@ describe('sparse schedul.qt.Tree', function() {
             console.log('    responded t0=',t0path,t0status);
             switch(t0status){
             case schedul.qt.NodeStatus.EXISTING_TERMINAL:
-              t1.addTerminal(t0path,true);
+              t1.addTerminal(t0path,true,1);
               break;
             case schedul.qt.NodeStatus.EMPTY_TERMINAL:
-              t1.addTerminal(t0path,false);
+              t1.addTerminal(t0path,false,0);
               break;
             case schedul.qt.NodeStatus.GRAY:
               t1.addGray(t0path);
