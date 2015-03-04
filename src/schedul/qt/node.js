@@ -11,7 +11,7 @@ goog.require('schedul.qt.NodeStatus');
  * @param {!schedul.qt.NodeStatus=} opt_status
  * @template V
  */
-schedul.qt.Node = function(value,opt_status) {
+schedul.qt.Node = function(value, opt_status) {
   this.value_ = value;
   this.children_ = [null, null, null, null];
   this.parent_ = null;
@@ -27,7 +27,7 @@ schedul.qt.Node = function(value,opt_status) {
  * @param {?V} value
  * @template V
  */
-schedul.qt.Node.prototype.setValue = function(value){
+schedul.qt.Node.prototype.setValue = function(value) {
   this.value_ = value;
 };
 
@@ -36,7 +36,7 @@ schedul.qt.Node.prototype.setValue = function(value){
  * @return {?V}
  * @template V
  */
-schedul.qt.Node.prototype.getValue = function(){
+schedul.qt.Node.prototype.getValue = function() {
   return this.value_;
 };
 
@@ -116,8 +116,8 @@ schedul.qt.Node.prototype.getPathCache = function() {
 /**
  * @param {!number} slot
  */
-schedul.qt.Node.assertSlot = function(slot){
-  goog.asserts.assertNumber(slot,slot+'is not a number');
+schedul.qt.Node.assertSlot = function(slot) {
+  goog.asserts.assertNumber(slot, slot + 'is not a number');
   goog.asserts.assert(slot === 0 || slot === 1 || slot === 2 || slot === 3, slot + ' is an invalid slot.');
 };
 

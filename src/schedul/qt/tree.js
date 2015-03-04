@@ -11,7 +11,7 @@ goog.require('schedul.qt.NodeStatus');
  * @constructor
  */
 schedul.qt.Tree = function() {
-  this.root_ = new schedul.qt.Node(null,schedul.qt.NodeStatus.GRAY);
+  this.root_ = new schedul.qt.Node(null, schedul.qt.NodeStatus.GRAY);
 
   /**
    * @private
@@ -67,9 +67,9 @@ schedul.qt.Tree.prototype.appendRestOfTheNodesRequired_ = function(addingPath, a
   for (var i = appendingPathIndex; i < addingPath.length; i++) {
     var appendingSlot = addingPath[i];
     var status = (i < addingPath.length - 1) ?
-      schedul.qt.NodeStatus.GRAY :
-      finalStatus;
-    var newChildNode = new schedul.qt.Node(null,status);
+	  schedul.qt.NodeStatus.GRAY :
+	  finalStatus;
+    var newChildNode = new schedul.qt.Node(null, status);
     appendingNode.updateChild(newChildNode, appendingSlot);
     newChildNode.setParent(appendingNode);
     var newPathCache = goog.array.clone(appendingNode.getPathCache());
@@ -86,7 +86,7 @@ schedul.qt.Tree.prototype.appendRestOfTheNodesRequired_ = function(addingPath, a
  * @private
  * @param {!schedul.qt.Node} endNode
  */
-schedul.qt.Tree.prototype.mergeParentsFromEnd_ = function(endNode) {
+schedul.qt.Tree.mergeParentsFromEnd_ = function(endNode) {
   goog.asserts.assertInstanceof(endNode, schedul.qt.Node);
 
   while (true) {
@@ -118,11 +118,11 @@ schedul.qt.Tree.prototype.mergeParentsFromEnd_ = function(endNode) {
     if (thereAreStillGrayChildrenLeft) { break; } // Exiting while-loop
 
     var merged = false;
-    if (foundEmptyLeaves < 1) { // === 0
+    if (foundEmptyLeaves < 1 && foundExistingLeaves > 0) { // === 0
       // All children are existing-terminal => update parent to existing-terminal
       parentNode.setStatus(schedul.qt.NodeStatus.EXISTING_TERMINAL);
       merged = true;
-    }else if (foundExistingLeaves < 1) { // === 0
+    }else if (foundExistingLeaves < 1 && foundEmptyLeaves > 0) { // === 0
       parentNode.setStatus(schedul.qt.NodeStatus.EMPTY_TERMINAL);
       merged = true;
     }else {
@@ -145,7 +145,7 @@ schedul.qt.Tree.prototype.mergeParentsFromEnd_ = function(endNode) {
  * @param {!V} value
  * @template V
  */
-schedul.qt.Tree.prototype.addTerminal = function(addingPath, isExisting,value) {
+schedul.qt.Tree.prototype.addTerminal = function(addingPath, isExisting, value) {
   schedul.qt.Node.assertPath(addingPath);
   goog.asserts.assertBoolean(isExisting);
 
@@ -164,7 +164,7 @@ schedul.qt.Tree.prototype.addTerminal = function(addingPath, isExisting,value) {
     value);
 
   // Merge full nodes from leaves
-  this.mergeParentsFromEnd_(endNode);
+  schedul.qt.Tree.mergeParentsFromEnd_(endNode);
 };
 
 
@@ -207,7 +207,7 @@ schedul.qt.Tree.prototype.forEachShallowPathsInPath = function(targetPath, callb
     var isTerminal = false;
     var slot = targetPath[startingIndex];
     var foundChild = startingNode.getChild(slot);
-    if (goog.isDefAndNotNull(foundChild))  {
+    if (goog.isDefAndNotNull(foundChild)) {
       var status = foundChild.getStatus();
       switch (status) {
       case schedul.qt.NodeStatus.EXISTING_TERMINAL:
@@ -215,7 +215,7 @@ schedul.qt.Tree.prototype.forEachShallowPathsInPath = function(targetPath, callb
         isTerminal = true;
         break;
       }
-    }else{
+    }else {
       isInvalidPath = true;
       break;
     }
@@ -237,12 +237,12 @@ schedul.qt.Tree.prototype.forEachShallowPathsInPath = function(targetPath, callb
 
   // Dig inside current found nodes
   while (true) {
-      while(openNodes.length > 0){
-        var openNode = openNodes.pop();
-        this.forEachShallowPathsInNode_(openNode, closedNodes, callback, opt_obj);
-      }
+    while (openNodes.length > 0) {
+      var openNode = openNodes.pop();
+      this.forEachShallowPathsInNode_(openNode, closedNodes, callback, opt_obj);
+    }
     // Move left openNodes to closedNodes
-    goog.array.forEach(openNodes,function(openNode){
+    goog.array.forEach(openNodes, function(openNode) {
       closedNodes.push(openNode);
     },this);
 
@@ -319,11 +319,86 @@ schedul.qt.Tree.prototype.statusForPath = function(path) {
  * @return {?V}
  * @template V
  */
-schedul.qt.Tree.prototype.valueForPath = function(path){
+schedul.qt.Tree.prototype.valueForPath = function(path) {
   this.findAppendingNode_(path);
   var appendingNode = this.foundAppendingStatus_.node;
   if (goog.isNull(appendingNode)) {
     return null;
   }
   return appendingNode.getValue();
+};
+
+
+/**
+ * @param {!boolean} isExisting
+ */
+schedul.qt.Tree.prototype.markUnknownLeaves = function(isExisting) {
+  schedul.qt.Tree.markUnknownLeavesUnderNode(this.root_, isExisting);
+};
+
+
+/**
+ * @param {!schedul.qt.Node} node
+ * @param {!boolean} isExisting
+ */
+schedul.qt.Tree.markUnknownLeavesUnderNode = function(node, isExisting) {
+  goog.asserts.assertInstanceof(node, schedul.qt.Node);
+
+  switch (node.getStatus()) {
+  case schedul.qt.NodeStatus.EXISTING_TERMINAL:
+  case schedul.qt.NodeStatus.EMPTY_TERMINAL:
+  case schedul.qt.NodeStatus.SURELY_MIXED:
+    return;
+  }
+  for (var i = 0; i < 4; i++) {
+    var child = node.getChild(i);
+    if (goog.isNull(child)) {
+      var newChild = new schedul.qt.Node(null, isExisting ? schedul.qt.NodeStatus.EXISTING_TERMINAL : schedul.qt.NodeStatus.EMPTY_TERMINAL);
+      node.updateChild(newChild, i);
+      var newPathCache = goog.array.clone(node.getPathCache());
+      newPathCache.push(i);
+      newChild.setPathCache(newPathCache);
+      newChild.setParent(node);
+      schedul.qt.Tree.mergeParentsFromEnd_(newChild);
+    }else {
+      schedul.qt.Tree.markUnknownLeavesUnderNode(child, isExisting);
+    }
+  }
+};
+
+
+
+/**
+ * @param {function(this: S, !Array.<!number>,schedul.qt.NodeStatus,?V): *} callback Callback.
+ * @param {S=} opt_this Scope.
+ * @template S,V
+ */
+schedul.qt.Tree.prototype.forEachLeaves = function(callback, opt_this) {
+  goog.asserts.assertFunction(callback);
+
+  schedul.qt.Tree.forEachLeavesInNode(this.root_, callback, opt_this);
+};
+
+
+/**
+ * @param {!schedul.qt.Node} node
+ * @param {function(this: S, !Array.<!number>,schedul.qt.NodeStatus,?V): *} callback Callback.
+ * @param {S=} opt_this Scope.
+ * @template S,V
+ */
+schedul.qt.Tree.forEachLeavesInNode = function(node, callback, opt_this) {
+  goog.asserts.assertInstanceof(node, schedul.qt.Node);
+  goog.asserts.assertFunction(callback);
+
+  var isLeaf = true;
+  for (var i = 0; i < 4; i++) {
+    var child = node.getChild(i);
+    if (!goog.isNull(child)) {
+      isLeaf = false;
+      schedul.qt.Tree.forEachLeavesInNode(child, callback, opt_this);
+    }
+  }
+  if (!isLeaf) {return;}
+
+  callback.call(opt_this, node.getPathCache(), node.getStatus(), node.getValue());
 };
