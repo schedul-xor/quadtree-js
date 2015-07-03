@@ -1,0 +1,7 @@
+[submodule "vendor/ol3"]
+	path = vendor/ol3
+	url = git@github.com:schedul-xor/ol3.git
+	branch = private-master
+[submodule "vendor/sorted-array"]
+	path = vendor/sorted-array
+	url = git@github.com:schedul-xor/sortedarray-closure.git

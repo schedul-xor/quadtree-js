@@ -6,6 +6,7 @@ goog.require('goog.object');
 goog.require('javascript.SortedArray');
 goog.require('ol.TileCoord');
 goog.require('ol.TileRange');
+goog.require('ol.tilecoord');
 goog.require('schedul.qt.Base');
 goog.require('schedul.qt.NodeLoadingStatus');
 goog.require('schedul.qt.NodeStatus');
@@ -203,7 +204,7 @@ schedul.qt.MapTree.prototype.
         iterPath.length = zoomLevel;
       }
       var tile = schedul.qt.Base.tileForPath(iterPath);
-      var tileHash = tile.hash();
+      var tileHash = ol.tilecoord.hash(tile);
       uniqueTiles[tileHash] = tile;
     }
     var foundTiles = [];
@@ -276,15 +277,15 @@ schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath = function(path, notL
 
   var isChildOfAlreadyLoadedTile = false;
   var mostDensePath = this.mostDensePathForPath(path);
-  var mostDensePathTxt = mostDensePath.join('');
-  if (goog.object.containsKey(this.path2status_, mostDensePathTxt) &&
+    var mostDensePathTxt = mostDensePath.join('');
+  if (goog.object.containsKey(this.path2status_, mostDensePathTxt,schedul.qt.NodeStatus.IS_SURELY_LEAF) &&
       this.path2status_[mostDensePathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF) {
     var mostDenseTile = schedul.qt.Base.tileForPath(mostDensePath);
     loadedVessel.push(mostDenseTile);
     isChildOfAlreadyLoadedTile = true;
   }
 
-  if (!isChildOfAlreadyLoadedTile) {
+    if (!isChildOfAlreadyLoadedTile) {
     this.findNotLoadedRangesInsidePath_(path, notLoadedVessel, loadedVessel);
   }
 };

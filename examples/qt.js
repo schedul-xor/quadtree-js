@@ -28,7 +28,7 @@ goog.events.listen(insertButton,goog.ui.Component.EventType.ACTION, function(e) 
   var x = Number(a[0]);
   var y = Number(a[1]);
   var z = Number(a[2]);
-  var tc = new ol.TileCoord(z,x,y);
+  var tc = [z,x,y];
 
   qt.registerTileOutlineWithTile(tc);
   qt.overrideTileOutlineWithTile(tc,tc,schedul.qt.NodeStatus.IS_SURELY_LEAF);
