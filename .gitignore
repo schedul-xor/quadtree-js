@@ -5,3 +5,6 @@ sortedarray-closure-master
 src/ol
 src/javascript
 master.zip
+*~
+*.pyc
+build

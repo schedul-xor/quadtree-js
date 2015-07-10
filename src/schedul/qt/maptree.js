@@ -278,7 +278,7 @@ schedul.qt.MapTree.prototype.findNotLoadedRangesInsidePath = function(path, notL
   var isChildOfAlreadyLoadedTile = false;
   var mostDensePath = this.mostDensePathForPath(path);
     var mostDensePathTxt = mostDensePath.join('');
-  if (goog.object.containsKey(this.path2status_, mostDensePathTxt,schedul.qt.NodeStatus.IS_SURELY_LEAF) &&
+  if (goog.object.containsKey(this.path2status_, mostDensePathTxt) &&
       this.path2status_[mostDensePathTxt] === schedul.qt.NodeStatus.IS_SURELY_LEAF) {
     var mostDenseTile = schedul.qt.Base.tileForPath(mostDensePath);
     loadedVessel.push(mostDenseTile);

@@ -1,14 +1,13 @@
-language: node_js
+env:
+  - DISPLAY=:99.0
 
 before_install:
+  - "sudo pip install -r requirements.txt"
   - "npm install -g npm && npm install"
-
-before_script:
-  - 'cp -r vendor/ol3/src src'
-  - 'cp -r vendor/sorted-array/src src'
-  - 'python node_modules/nclosure/third_party/closure-library/closure/bin/build/depswriter.py "--root_with_prefix=src/ ../../../../../../src" "--root_with_prefix=examples/ ../../../../../../examples" "--root_with_prefix=node_modules/nclosure/lib/third_party/node ../../../../lib/third_party/node" > deps.js'
+  - "sh -e /etc/init.d/xvfb start"
 
 script:
-  - "find test | grep '.test.js$' | xargs mocha -R tap"
-  - 'node tasks/build.js buildcfg/config.json qt.min.js'
-  - 'node tasks/build.js buildcfg/plain.json plain.min.js'
+  - "mkdir build"
+  - "sh generate_requires.sh"
+  - "node tasks/test.js"
+  - "node tasks/build.js config/plain.json build/plain.min.js"
