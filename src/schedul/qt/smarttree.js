@@ -1,6 +1,7 @@
 goog.provide('schedul.qt.SmartTree');
 
 goog.require('goog.asserts');
+goog.require('goog.events.EventTarget');
 goog.require('schedul.qt.Base');
 goog.require('schedul.qt.NodeLoadingStatus');
 goog.require('schedul.qt.NodeStatus');
